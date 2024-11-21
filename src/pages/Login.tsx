@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
@@ -16,7 +15,6 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // The `name` property now strictly matches the keys defined in the schema
   const fields: {
     name: keyof LoginFormData;
     label: string;
@@ -39,11 +37,32 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      loginSchema.parse(data);
       const user = await authService.login(data.email, data.password);
       login(user.name, user.email, user.password);
       navigate("/");
     } catch (error) {
-      console.error("Login failed:", error);
+      // Handle Zod validation errors
+      if (error instanceof z.ZodError) {
+        const formattedErrors = error.errors.reduce((acc, err) => {
+          acc[err.path[0]] = err.message;
+          return acc;
+        }, {} as { [key: string]: string });
+        throw formattedErrors; // Pass these back to the Form component
+      }
+      // Handle specific errors from authService
+      else if (error instanceof Error) {
+        if (error.message === "EMAIL_NOT_FOUND") {
+          throw { email: "The Email is Incorrect" };
+        } else if (error.message === "INVALID_PASSWORD") {
+          throw { password: "The Password is Incorrect" };
+        } else {
+          throw { form: "An unexpected error occurred" };
+        }
+      } else {
+        // Handle generic unexpected errors
+        throw { form: "An unexpected error occurred" };
+      }
     }
   };
 

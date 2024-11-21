@@ -1,4 +1,4 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
 import { authService } from "../services/authService";
@@ -10,6 +10,8 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword() {
+  const navigate = useNavigate();
+
   const fields = [
     {
       name: "email" as const,
@@ -22,8 +24,8 @@ export default function ForgotPassword() {
   const onSubmit = async (data: ForgotPasswordFormData): Promise<void> => {
     try {
       await authService.forgotPassword(data.email);
-      // Instead of returning a string, we'll use an alert to show the success message
       alert("Password reset email sent. Please check your inbox.");
+      navigate("/change-password", { state: { email: data.email } });
     } catch (error) {
       console.error("Password reset failed:", error);
       throw new Error("Failed to send reset email. Please try again.");

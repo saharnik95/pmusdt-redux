@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, X } from "lucide-react"; // Import the cross icon
 import { Typography } from "@mui/material";
+import CrossIconComponent from "@/components/icons/CrossIconComponent";
 
 interface InputProps {
   label: string;
@@ -43,7 +44,7 @@ export default function Input({
             onClick={onClear} // Clear input when clicked
             className="absolute inset-y-0 right-0 pr-4 flex items-center"
           >
-            <X className="h-5 w-5 text-red-500" />
+            <CrossIconComponent className="h-5 w-5 text-red-500" />
           </button>
         )}
 

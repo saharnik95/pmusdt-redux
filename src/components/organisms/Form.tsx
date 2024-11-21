@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-import { useForm, Controller, FieldValues, Path } from "react-hook-form";
+import {
+  useForm,
+  Controller,
+  FieldValues,
+  Path,
+  SubmitHandler,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { Typography, Box, Checkbox, FormControlLabel } from "@mui/material";
-import { Eye, EyeOff } from "lucide-react";
-import FormHeader from "../molecules/form/FormHeader";
 import Button from "@/components/atoms/form/Button";
 import Input from "@/components/atoms/form/Input";
 import FormFooter from "@/components/molecules/form/FormFooter";
+import { useAuth } from "@/services/authContext";
 
 interface FormField<T extends FieldValues> {
   name: Path<T>;
@@ -45,13 +50,15 @@ export default function Form<T extends z.ZodType<any, any>>({
 }: FormProps<T>) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+  const { setPersistentLogin } = useAuth();
   type FormData = z.infer<T>;
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setError: formSetError, // <-- Use the setError from react-hook-form
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: fields.reduce((acc, field) => {
@@ -60,13 +67,25 @@ export default function Form<T extends z.ZodType<any, any>>({
     }, {} as FormData),
   });
 
-  const handleFormSubmit = async (data: FormData) => {
+  const handleFormSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     setIsLoading(true);
     setError(null);
     try {
       await onSubmit(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      if (err && typeof err === "object") {
+        Object.entries(err).forEach(([key, message]) => {
+          formSetError(key as Path<FormData>, {
+            type: "manual",
+            message: message as string,
+          });
+        });
+      } else {
+        formSetError("root" as Path<FormData>, {
+          type: "manual",
+          message: err instanceof Error ? err.message : "An error occurred",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -112,6 +131,7 @@ export default function Form<T extends z.ZodType<any, any>>({
               <FormControlLabel
                 control={
                   <Checkbox
+                    onChange={(e) => setKeepLoggedIn(e.target.checked)}
                     sx={{
                       padding: 0,
                       color: "#5B5F5E",

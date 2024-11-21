@@ -6,7 +6,6 @@ import React, {
   useEffect,
 } from "react";
 
-// Define User interface with name, email, and password
 interface User {
   name: string;
   email: string;
@@ -17,6 +16,7 @@ interface AuthContextType {
   user: User | null;
   login: (name: string, email: string, password: string) => void;
   logout: () => void;
+  setPersistentLogin: (persist: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,11 +35,12 @@ export const useAuth = (): AuthContextType => {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [persistentLogin, setPersistentLogin] = useState(false);
 
-  // Load the user from localStorage if available
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const storedPersistentLogin = localStorage.getItem("persistentLogin");
+    if (storedUser && storedPersistentLogin === "true") {
       setUser(JSON.parse(storedUser));
     }
   }, []);
@@ -47,16 +48,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (name: string, email: string, password: string) => {
     const newUser = { name, email, password };
     setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser)); // Store user in localStorage
+    if (persistentLogin) {
+      localStorage.setItem("user", JSON.stringify(newUser));
+      localStorage.setItem("persistentLogin", "true");
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user"); // Remove user from localStorage
+    localStorage.removeItem("user");
+    localStorage.removeItem("persistentLogin");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, setPersistentLogin }}>
       {children}
     </AuthContext.Provider>
   );

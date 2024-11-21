@@ -33,6 +33,11 @@ module.exports = {
           input: "#242C39",
           buttonBackground: "#1D8D94",
         },
+        topBar: {
+          text: "#596B89",
+          input: "",
+          buttonBackground: "",
+        },
       },
     },
   },

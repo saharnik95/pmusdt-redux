@@ -19,15 +19,20 @@ export const authService = {
   login: (email: string, password: string): Promise<User> => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
+        // Check if email exists
         const user = users.find(
-          (u) =>
-            u.email.toLowerCase() === email.toLowerCase() &&
-            u.password === password
+          (u) => u.email.toLowerCase() === email.toLowerCase()
         );
-        if (user) {
-          resolve(user);
+
+        if (!user) {
+          // Email not found
+          reject(new Error("EMAIL_NOT_FOUND"));
+        } else if (user.password !== password) {
+          // Password is incorrect
+          reject(new Error("INVALID_PASSWORD"));
         } else {
-          reject(new Error("Invalid email or password"));
+          // Successful login
+          resolve(user);
         }
       }, 500); // Simulate latency
     });
