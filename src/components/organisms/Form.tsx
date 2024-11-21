@@ -13,7 +13,6 @@ import { Typography, Box, Checkbox, FormControlLabel } from "@mui/material";
 import Button from "@/components/atoms/form/Button";
 import Input from "@/components/atoms/form/Input";
 import FormFooter from "@/components/molecules/form/FormFooter";
-import { useAuth } from "@/services/authContext";
 
 interface FormField<T extends FieldValues> {
   name: Path<T>;
@@ -27,7 +26,7 @@ interface FormProps<T extends z.ZodType<any, any>> {
   title: string;
   fields: FormField<z.infer<T>>[];
   schema: T;
-  onSubmit: (data: z.infer<T>) => Promise<void>;
+  onSubmit: (data: z.infer<T>, keepLoggedIn: boolean) => Promise<void>;
   submitButtonText: string;
   footerText?: string;
   footerLinkText?: string;
@@ -51,14 +50,14 @@ export default function Form<T extends z.ZodType<any, any>>({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
-  const { setPersistentLogin } = useAuth();
   type FormData = z.infer<T>;
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    setError: formSetError, // <-- Use the setError from react-hook-form
+    setError: formSetError,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: fields.reduce((acc, field) => {
@@ -71,7 +70,7 @@ export default function Form<T extends z.ZodType<any, any>>({
     setIsLoading(true);
     setError(null);
     try {
-      await onSubmit(data);
+      await onSubmit(data, keepLoggedIn);
     } catch (err) {
       if (err && typeof err === "object") {
         Object.entries(err).forEach(([key, message]) => {
@@ -89,6 +88,10 @@ export default function Form<T extends z.ZodType<any, any>>({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleClearInput = (fieldName: Path<FormData>) => {
+    setValue(fieldName, "" as any);
   };
 
   return (
@@ -118,6 +121,7 @@ export default function Form<T extends z.ZodType<any, any>>({
                 type={field.type}
                 value={value || ""}
                 onChange={onChange}
+                onClear={() => handleClearInput(field.name)}
                 error={!!errors[field.name]}
                 helperText={errors[field.name]?.message as string}
                 placeholder={field.placeholder}
@@ -131,6 +135,7 @@ export default function Form<T extends z.ZodType<any, any>>({
               <FormControlLabel
                 control={
                   <Checkbox
+                    checked={keepLoggedIn}
                     onChange={(e) => setKeepLoggedIn(e.target.checked)}
                     sx={{
                       padding: 0,

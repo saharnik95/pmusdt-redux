@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
 import { authService } from "../services/authService";
@@ -23,10 +23,22 @@ type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 export default function ChangePassword() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const location = useLocation();
+  const { logout } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
-  // Explicitly type the fields array
+  useEffect(() => {
+    const state = location.state as { email?: string } | undefined;
+    if (state && state.email) {
+      setEmail(state.email);
+    } else {
+      setErrorMessage(
+        "Email not provided. Please start from the forgot password page."
+      );
+    }
+  }, [location]);
+
   const fields: {
     name: keyof ChangePasswordFormData;
     label: string;
@@ -49,35 +61,41 @@ export default function ChangePassword() {
 
   const onSubmit = async (data: ChangePasswordFormData): Promise<void> => {
     try {
-      console.log("User from context:", user);
-
-      console.log("Submitting data:", data);
-      if (!user || !user.email) {
-        throw new Error("Please log in again.");
+      if (!email) {
+        throw new Error(
+          "Email not provided. Please start from the forgot password page."
+        );
       }
 
       const response = await authService.changePassword(
-        user.email,
+        email,
         data.newPassword
       );
       console.log("Password change response:", response);
 
       // Alert user
-      alert("Password successfully changed. Logging out...");
+      alert(
+        "Password successfully changed. Please log in with your new password."
+      );
 
       // Logout user
-      console.log("Calling logout...");
       logout();
-      console.log("Logout successful.");
 
       // Navigate to login page
-      console.log("Navigating to login...");
       navigate("/login");
     } catch (error: any) {
       console.error("Error occurred:", error);
       setErrorMessage(error.message);
     }
   };
+
+  if (errorMessage) {
+    return (
+      <div className="flex items-center justify-center my-[150px]">
+        <div className="text-red-500">{errorMessage}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center my-[150px]">
@@ -88,7 +106,6 @@ export default function ChangePassword() {
         onSubmit={onSubmit}
         submitButtonText="Change Password"
       />
-      {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
     </div>
   );
 }

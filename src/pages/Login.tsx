@@ -35,11 +35,11 @@ export default function Login() {
     },
   ];
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: LoginFormData, keepLoggedIn: boolean) => {
     try {
       loginSchema.parse(data);
       const user = await authService.login(data.email, data.password);
-      login(user.name, user.email, user.password);
+      login(user.name, user.email, user.password, keepLoggedIn);
       navigate("/");
     } catch (error) {
       // Handle Zod validation errors

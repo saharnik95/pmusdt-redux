@@ -1,68 +1,61 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-  useEffect,
-} from "react";
-
-interface User {
-  name: string;
-  email: string;
-  password: string;
-}
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface AuthContextType {
-  user: User | null;
-  login: (name: string, email: string, password: string) => void;
+  user: { name: string; email: string } | null;
+  login: (
+    name: string,
+    email: string,
+    password: string,
+    keepLoggedIn: boolean
+  ) => void;
   logout: () => void;
-  setPersistentLogin: (persist: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [persistentLogin, setPersistentLogin] = useState(false);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [user, setUser] = useState<{ name: string; email: string } | null>(
+    null
+  );
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const storedPersistentLogin = localStorage.getItem("persistentLogin");
-    if (storedUser && storedPersistentLogin === "true") {
+    if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  const login = (name: string, email: string, password: string) => {
-    const newUser = { name, email, password };
-    setUser(newUser);
-    if (persistentLogin) {
-      localStorage.setItem("user", JSON.stringify(newUser));
-      localStorage.setItem("persistentLogin", "true");
+  const login = (
+    name: string,
+    email: string,
+    password: string,
+    keepLoggedIn: boolean
+  ) => {
+    const userData = { name, email };
+    setUser(userData);
+    if (keepLoggedIn) {
+      localStorage.setItem("user", JSON.stringify(userData));
     }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    localStorage.removeItem("persistentLogin");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, setPersistentLogin }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

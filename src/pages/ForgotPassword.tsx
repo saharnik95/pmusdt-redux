@@ -24,7 +24,6 @@ export default function ForgotPassword() {
   const onSubmit = async (data: ForgotPasswordFormData): Promise<void> => {
     try {
       await authService.forgotPassword(data.email);
-      alert("Password reset email sent. Please check your inbox.");
       navigate("/change-password", { state: { email: data.email } });
     } catch (error) {
       console.error("Password reset failed:", error);
