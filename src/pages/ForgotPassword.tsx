@@ -12,33 +12,57 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export default function ForgotPassword() {
   const navigate = useNavigate();
 
-  const fields = [
+  const fields: {
+    name: keyof ForgotPasswordFormData;
+    label: string;
+    type: string;
+    placeholder: string;
+  }[] = [
     {
-      name: "email" as const,
+      name: "email",
       label: "Email Address",
       type: "email",
       placeholder: "Please enter your email",
     },
   ];
 
-  const onSubmit = async (data: ForgotPasswordFormData): Promise<void> => {
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
+      forgotPasswordSchema.parse(data);
       await authService.forgotPassword(data.email);
       navigate("/change-password", { state: { email: data.email } });
     } catch (error) {
-      console.error("Password reset failed:", error);
-      throw new Error("Failed to send reset email. Please try again.");
+      // Handle Zod validation errors
+      if (error instanceof z.ZodError) {
+        const formattedErrors = error.errors.reduce((acc, err) => {
+          acc[err.path[0]] = err.message;
+          return acc;
+        }, {} as { [key: string]: string });
+        throw formattedErrors; // Pass these back to the Form component
+      }
+      // Handle specific errors from authService
+      else if (error instanceof Error) {
+        if (error.message === "EMAIL_NOT_FOUND") {
+          throw { email: "No account found with this email address" };
+        } else {
+          throw { form: "Failed to send reset email. Please try again." };
+        }
+      } else {
+        // Handle generic unexpected errors
+        throw { form: "An unexpected error occurred" };
+      }
     }
   };
 
   return (
-    <div className="flex lg:my-[152px] items-center justify-center  bg-primary-background">
+    <div className="flex lg:my-[152px] items-center justify-center bg-primary-background">
       <Form
         title="Forgot Password"
         fields={fields}
         schema={forgotPasswordSchema}
         onSubmit={onSubmit}
         submitButtonText="Confirm"
+        footerText="Remember your password?"
         footerLinkText="Login"
         footerLinkTo="/login"
       />

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, Checkbox, Divider, Typography } from "@mui/material";
 import ConfirmLevelrules from "../molecules/home/ConfirmLevelrules";
 import ConfirmEmail from "../molecules/confirmLevel/ConfirmEmail";
+import { Check } from "lucide-react";
 
 interface ExchangeInfo {
   fromAmount: string;
@@ -24,6 +25,7 @@ export default function ConfirmLevel({
   const [agreed, setAgreed] = useState(false);
   const [email, setEmail] = useState("");
 
+  //using saved email if it exist
   useEffect(() => {
     const savedEmail = localStorage.getItem("userEmail");
     if (savedEmail) {
@@ -31,6 +33,7 @@ export default function ConfirmLevel({
     }
   }, []);
 
+  //Handle Confitm
   const handleConfirm = () => {
     if (!agreed) {
       alert("Please agree to the terms.");
@@ -63,9 +66,12 @@ export default function ConfirmLevel({
 
   return (
     <div className="w-full flex-col justify-between bg-form-background md:rounded-[30px] rounded-[10px] lg:gap-36 lg:py-12 md:gap-8 gap-4 md:px-20 md:py-6 px-4 py-6 max-w-[1140px] lg:mx-auto">
+      {/*Header*/}
       <Typography variant="FH" className="text-white">
         Invoice Details :
       </Typography>
+      {/*Send*/}
+
       <div className="flex flex-row justify-between items-center lg:mt-[43px] md:mt-[33px] mt-[23px]">
         <Typography variant="FT" className="text-footer-text">
           Send :{" "}
@@ -84,6 +90,9 @@ export default function ConfirmLevel({
           </Typography>
         </div>
       </div>
+
+      {/*Recieve*/}
+
       <div className="flex flex-row justify-between items-center lg:mt-4 mt-2">
         <Typography variant="FT" className="text-footer-text">
           Receive :{" "}
@@ -102,24 +111,42 @@ export default function ConfirmLevel({
           </Typography>
         </div>
       </div>
+
       <Divider
         orientation="horizontal"
         sx={{ width: "100%", backgroundColor: "#596B89", mx: 1, mt: "34px" }}
       />
+
+      {/*showing Email if its not authenticated*/}
+
       {!user && (
         <ConfirmEmail onEmailChange={handleEmailChange} initialEmail={email} />
       )}
+
+      {/*ConfirmLevelrules*/}
+
       <ConfirmLevelrules />
+
+      {/*Checkbox*/}
+
       <div className="flex flex-row mt-8">
         <div className="flex items-center">
           <Checkbox
             checked={agreed}
             onChange={(e) => setAgreed(e.target.checked)}
+            icon={<span className="w-8 h-8 rounded-lg bg-[#242C39]" />}
+            checkedIcon={
+              <span className="w-8 h-8 rounded-lg bg-[#1D8D94] flex items-center justify-center ">
+                <Check className="w-5 h-5 text-white stroke-[3]" />
+              </span>
+            }
             sx={{
+              marginRight: "9px",
+              width: "32px",
+              height: "32px",
               padding: 0,
-              color: "#242C39",
-              "&.Mui-checked": {
-                color: "#1D8D94",
+              "&:hover": {
+                backgroundColor: "transparent",
               },
             }}
           />
@@ -129,6 +156,8 @@ export default function ConfirmLevel({
           </Typography>
         </div>
       </div>
+
+      {/*Submit Button*/}
       <div className="w-full flex justify-center">
         <Button
           onClick={handleConfirm}

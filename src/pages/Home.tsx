@@ -23,6 +23,8 @@ export default function Home() {
 
   const { user, isAuthenticated } = useAuth();
 
+  // when authenticated shows the saved level and exchangeinfo
+
   useEffect(() => {
     if (isAuthenticated) {
       const savedLevel = localStorage.getItem("currentLevel");
@@ -46,6 +48,7 @@ export default function Home() {
     }
   }, [isAuthenticated]);
 
+  //saves the ingoing current level and exchange info
   useEffect(() => {
     if (isAuthenticated) {
       localStorage.setItem("currentLevel", currentLevel.toString());

@@ -3,7 +3,6 @@ import { z } from "zod";
 import Form from "../components/organisms/Form";
 import { authService } from "../services/authService";
 import { useAuth } from "@/services/authContext";
-import { useState } from "react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -15,7 +14,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [error, setError] = useState<string | null>(null);
 
   const fields: {
     name: keyof LoginFormData;
@@ -41,32 +39,35 @@ export default function Login() {
     try {
       loginSchema.parse(data);
       const user = await authService.login(data.email, data.password);
-      await login(user.name, user.email, data.password, keepLoggedIn);
+      login(user.name, user.email, user.password, keepLoggedIn);
       navigate("/");
     } catch (error) {
+      // Handle Zod validation errors
       if (error instanceof z.ZodError) {
         const formattedErrors = error.errors.reduce((acc, err) => {
           acc[err.path[0]] = err.message;
           return acc;
         }, {} as { [key: string]: string });
-        throw formattedErrors;
-      } else if (error instanceof Error) {
+        throw formattedErrors; // Pass these back to the Form component
+      }
+      // Handle specific errors from authService
+      else if (error instanceof Error) {
         if (error.message === "EMAIL_NOT_FOUND") {
-          setError("The Email is Incorrect");
+          throw { email: "The Email is Incorrect" };
         } else if (error.message === "INVALID_PASSWORD") {
-          setError("The Password is Incorrect");
+          throw { password: "The Password is Incorrect" };
         } else {
-          setError("An unexpected error occurred");
+          throw { form: "An unexpected error occurred" };
         }
       } else {
-        setError("An unexpected error occurred");
+        // Handle generic unexpected errors
+        throw { form: "An unexpected error occurred" };
       }
     }
   };
 
   return (
-    <div className="flex lg:my-[152px] items-center justify-center bg-primary-background">
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+    <div className="flex items-center justify-center min-h-screen bg-primary-background">
       <Form
         title="Login"
         fields={fields}

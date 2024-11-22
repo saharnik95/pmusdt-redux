@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, SelectChangeEvent } from "@mui/material";
 import ExchangeLevelDiv from "@/components/molecules/exchangeLevel/ExchangeLevelDiv";
 
 interface ExchangeInfo {
@@ -17,23 +17,49 @@ interface ExchangeLevelProps {
 const MIN_AMOUNT = 100;
 const MAX_AMOUNT = 4832;
 
+const currencyOptions = {
+  "USDT(TRC20)": {
+    value: "USDT(TRC20)",
+    label: "USDT(TRC20)",
+    icon: "/images/tether.png",
+  },
+  "Perfect Money": {
+    value: "Perfect Money",
+    label: "Perfect Money",
+    icon: "/images/perfectMoney.png",
+  },
+};
+
 export default function ExchangeLevel({
   onNext,
   initialExchangeInfo,
 }: ExchangeLevelProps) {
-  const [fromValue, setFromValue] = useState(initialExchangeInfo.fromAmount);
-  const [toValue, setToValue] = useState(initialExchangeInfo.toAmount);
-  const [isSwapped, setIsSwapped] = useState(false);
+  const [fromValue, setFromValue] = useState(
+    initialExchangeInfo.fromAmount || ""
+  );
+  const [toValue, setToValue] = useState(initialExchangeInfo.toAmount || "");
+  const [fromCurrency, setFromCurrency] = useState(
+    initialExchangeInfo.fromCurrency || "USDT(TRC20)"
+  );
+  const [toCurrency, setToCurrency] = useState(
+    initialExchangeInfo.toCurrency || "Perfect Money"
+  );
   const [fromError, setFromError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  //setting prev data if exists
   useEffect(() => {
     const savedState = localStorage.getItem("exchangeState");
     if (savedState) {
-      const parsedState = JSON.parse(savedState);
-      setFromValue(parsedState.fromAmount);
-      setToValue(parsedState.toAmount);
-      setIsSwapped(parsedState.isSwapped);
+      try {
+        const parsedState = JSON.parse(savedState);
+        setFromValue(parsedState.fromAmount || "");
+        setToValue(parsedState.toAmount || "");
+        setFromCurrency(parsedState.fromCurrency || "USDT(TRC20)");
+        setToCurrency(parsedState.toCurrency || "Perfect Money");
+      } catch (error) {
+        console.error("Error parsing saved state:", error);
+      }
     }
   }, []);
 
@@ -41,12 +67,23 @@ export default function ExchangeLevel({
     const state = {
       fromAmount: fromValue,
       toAmount: toValue,
-      isSwapped,
+      fromCurrency,
+      toCurrency,
     };
     localStorage.setItem("exchangeState", JSON.stringify(state));
-  }, [fromValue, toValue, isSwapped]);
+  }, [fromValue, toValue, fromCurrency, toCurrency]);
 
-  const validateAmount = (amount: number) => {
+  //validating for input numbers
+  const validateAmount = (value: string) => {
+    if (!value || value.trim() === "") {
+      setFromError("Please enter an amount");
+      return false;
+    }
+    const amount = parseFloat(value);
+    if (isNaN(amount)) {
+      setFromError("Please enter a valid number");
+      return false;
+    }
     if (amount < MIN_AMOUNT) {
       setFromError(`Minimum amount is $${MIN_AMOUNT}`);
       return false;
@@ -59,24 +96,25 @@ export default function ExchangeLevel({
     return true;
   };
 
+  //still loading while its not validated
   const handleExchange = () => {
-    const amount = parseFloat(fromValue);
-    if (!validateAmount(amount)) {
-      alert(fromError);
+    if (!validateAmount(fromValue)) {
       return;
     }
 
     setIsLoading(true);
 
-    const exchangeRate = 1; // This should be dynamic in a real application
+    //calculating to value
+    const amount = parseFloat(fromValue);
+    const exchangeRate = 1;
     const calculatedToValue = (amount * exchangeRate).toFixed(2);
     setToValue(calculatedToValue);
 
     const exchangeInfo: ExchangeInfo = {
       fromAmount: fromValue,
-      fromCurrency: isSwapped ? "Perfect Money" : "USDT(TRC20)",
+      fromCurrency,
       toAmount: calculatedToValue,
-      toCurrency: isSwapped ? "USDT(TRC20)" : "Perfect Money",
+      toCurrency,
     };
 
     setTimeout(() => {
@@ -85,30 +123,44 @@ export default function ExchangeLevel({
     }, 5000);
   };
 
+  //swapping
   const handleSwap = () => {
-    setIsSwapped(!isSwapped);
     setFromValue(toValue);
     setToValue(fromValue);
+    setFromCurrency(toCurrency);
+    setToCurrency(fromCurrency);
     setFromError("");
   };
 
   const handleFromValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFromValue(value);
-    validateAmount(parseFloat(value));
+    validateAmount(value);
+  };
+
+  const handleFromCurrencyChange = (event: SelectChangeEvent<string>) => {
+    setFromCurrency(event.target.value as keyof typeof currencyOptions);
+  };
+
+  const handleToCurrencyChange = (event: SelectChangeEvent<string>) => {
+    setToCurrency(event.target.value as keyof typeof currencyOptions);
   };
 
   return (
     <div className="relative flex flex-col w-full items-center">
+      {/*Top Exchange Div*/}
+
       <ExchangeLevelDiv
         label="From"
         value={fromValue}
         onChange={handleFromValueChange}
         readOnly={false}
-        currency={isSwapped ? "/images/perfectMoney.png" : "/images/tether.png"}
-        currencyLabel={isSwapped ? "Perfect Money" : "USDT(TRC20)"}
+        currency={currencyOptions[fromCurrency as keyof typeof currencyOptions]}
         error={fromError}
+        onCurrencyChange={handleFromCurrencyChange}
       />
+
+      {/*Swapping flash */}
 
       <div className="relative" style={{ height: "27px" }}>
         <div
@@ -122,14 +174,18 @@ export default function ExchangeLevel({
         </div>
       </div>
 
+      {/*Bottom Exchange Div*/}
+
       <ExchangeLevelDiv
         label="To"
         value={toValue}
         onChange={() => {}}
         readOnly={true}
-        currency={isSwapped ? "/images/tether.png" : "/images/perfectMoney.png"}
-        currencyLabel={isSwapped ? "USDT(TRC20)" : "Perfect Money"}
+        currency={currencyOptions[toCurrency as keyof typeof currencyOptions]}
+        onCurrencyChange={handleToCurrencyChange}
       />
+
+      {/*Submit Button*/}
       <div className="flex lg:w-[560px] md:w-[480px] justify-center">
         <Button
           sx={{
@@ -143,7 +199,7 @@ export default function ExchangeLevel({
           variant="contained"
           type="button"
           onClick={handleExchange}
-          disabled={!!fromError || isLoading}
+          disabled={!!fromError || isLoading || !fromValue}
         >
           {isLoading ? (
             <CircularProgress size={24} color="inherit" />

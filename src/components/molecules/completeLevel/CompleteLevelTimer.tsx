@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
+import CircleIconComponent from "@/components/icons/CircleIconComponent";
 
 interface GraphicTimerProps {
   initialTime?: number;
@@ -55,63 +56,36 @@ export default function CompleteLevelTimer({
       .toString()
       .padStart(2, "0")}`;
   };
-  {
-    /*  const handleSuccess = () => {
-    setStatus("success");
-    onComplete && onComplete("success");
-  }; */
-  }
 
   return (
-    <div className="flex flex-col items-center justify-center p-2 text-white rounded-2xl w-[140px] h-[140px] relative">
-      <svg
-        className="absolute top-0 left-0 w-full h-full"
-        viewBox="0 0 136 136"
-      >
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="16.88%" stopColor="#2A3342" />
-            <stop offset="85.61%" stopColor="#40A578" />
-          </linearGradient>
-        </defs>
-        <circle
-          cx="68"
-          cy="68"
-          r="67"
-          fill="none"
-          stroke="#414E63"
-          strokeWidth="1"
-        />
-        <path
-          d="M68 1 A67 67 0 0 1 135 68"
-          fill="none"
-          stroke="url(#gradient)"
-          strokeWidth="1"
-          strokeLinecap="round"
-          transform={`rotate(${rotation}, 68, 68)`}
-        />
-        <circle
-          cx="135"
-          cy="68"
-          r="6"
-          fill="#40A578"
-          filter="drop-shadow(0px 0px 4px rgba(64, 165, 120, 0.6))"
-          transform={`rotate(${rotation}, 68, 68)`}
-        />
-      </svg>
+    <div
+      className="flex flex-col items-center justify-center text-white rounded-2xl relative
+                    w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] md:w-[160px] md:h-[160px] lg:w-[171px] lg:h-[171px]"
+    >
+      <div className="absolute inset-0 w-full h-full p-2">
+        <CircleIconComponent rotation={rotation} />
+      </div>
       <div className="flex flex-col items-center justify-center z-10">
-        <span className="text-xs mb-1">Time For Payment</span>
-        <span className="text-2xl font-bold mb-1">{formatTime(timeLeft)}</span>
+        <span className="text-[10px] sm:text-xs md:text-sm mb-1">
+          Time For Payment
+        </span>
+        <span className="text-lg sm:text-xl md:text-2xl font-bold mb-1">
+          {formatTime(timeLeft)}
+        </span>
         <div className="flex items-center">
-          <Bell size={12} className="mr-1" />
-          <span className="text-xs">15 : 30</span>
+          <Bell size={10} className="mr-1" />
+          <span className="text-[10px] sm:text-xs">15 : 30</span>
         </div>
       </div>
       {status === "success" && (
-        <div className="mt-4 text-green-500 font-bold">Payment Successful!</div>
+        <div className="mt-2 text-green-500 font-bold text-[10px] sm:text-xs">
+          Payment Successful!
+        </div>
       )}
       {status === "failed" && (
-        <div className="mt-4 text-red-500 font-bold">Payment Failed!</div>
+        <div className="mt-2 text-[#F66066] font-bold text-[10px] sm:text-xs">
+          Payment Failed!
+        </div>
       )}
     </div>
   );

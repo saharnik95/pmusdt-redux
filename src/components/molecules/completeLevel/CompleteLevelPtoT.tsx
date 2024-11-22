@@ -116,8 +116,7 @@ export default function CompleteLevelPtoT({
           <Select
             value={selectedNetwork}
             onChange={handleNetworkChange}
-            id="network"
-            className="sm:w-[126px] h-[57px] px-4 bg-[#1D8D94] text-white"
+            className="sm:w-[126px] w-full bg-[#1D8D94] text-white rounded-t-[10px] sm:rounded-t-none sm:rounded-l-[10px]"
             sx={{
               color: "white",
               fontWeight: 700,
@@ -128,13 +127,20 @@ export default function CompleteLevelPtoT({
               borderTopLeftRadius: "10px",
               borderBottomLeftRadius: "10px",
               "& .MuiSelect-select": {
-                padding: { xs: "16px", sm: "16px" },
+                padding: "16px",
+                paddingRight: "40px", // Add space for the icon
+                display: "flex",
+                alignItems: "center",
               },
               "& .MuiSvgIcon-root": {
                 display: "none",
               },
               "& .MuiOutlinedInput-notchedOutline": {
                 border: "none",
+              },
+              "& .MuiSelect-icon": {
+                right: "12px",
+                color: "white",
               },
             }}
             MenuProps={{
@@ -147,9 +153,7 @@ export default function CompleteLevelPtoT({
                 },
               },
             }}
-            IconComponent={(props) => (
-              <DownFlashIconComponent {...props} width={24} height={24} />
-            )}
+            IconComponent={DownFlashIconComponent}
           >
             {networks.map((network) => (
               <MenuItem key={network} value={network}>
@@ -179,7 +183,11 @@ export default function CompleteLevelPtoT({
       <Button
         sx={{
           alignSelf: "center",
-          width: "560px",
+          width: {
+            xs: "310px",
+            md: "500px",
+            lg: "560px",
+          },
           padding: "18px",
           borderRadius: "10px",
           boxShadow: "0px 0px 20px 0px rgba(29, 141, 148, 0.5)",

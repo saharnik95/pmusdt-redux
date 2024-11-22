@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react"; // Import the cross icon
+import { EyeOff } from "lucide-react";
 import { Typography } from "@mui/material";
 import CrossIconComponent from "@/components/icons/CrossIconComponent";
+import EyeIconComponent from "@/components/icons/EyeIconComponent";
 
 interface InputProps {
   label: string;
@@ -9,7 +10,7 @@ interface InputProps {
   type: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onClear?: () => void; // Added callback to clear input
+  onClear?: () => void;
   error?: boolean;
   helperText?: string;
   placeholder?: string;
@@ -20,7 +21,7 @@ export default function Input({
   type,
   value,
   onChange,
-  onClear, // Used to clear the input
+  onClear,
   error,
   helperText,
   placeholder,
@@ -44,25 +45,26 @@ export default function Input({
         {name === "email" && error && value && (
           <button
             type="button"
-            onClick={onClear} // Clear input when clicked
+            onClick={onClear}
             className="absolute inset-y-0 right-0 pr-4 flex items-center"
           >
             <CrossIconComponent className="h-5 w-5 text-red-500" />
           </button>
         )}
+        {/* If the field is password and there's an error, and eye off  */}
 
         {type === "password" && (
           <button
             type="button"
             onClick={toggleShowPassword}
             className={`absolute inset-y-0 right-0 pr-4 flex items-center ${
-              error ? "text-red-500" : "text-gray-400"
+              error ? "text-[#F66066]" : "text-gray-400"
             }`}
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5" />
             ) : (
-              <Eye className="h-5 w-5" />
+              <EyeIconComponent className="h-5 w-5" />
             )}
           </button>
         )}

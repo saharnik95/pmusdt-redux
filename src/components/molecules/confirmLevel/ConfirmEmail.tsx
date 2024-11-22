@@ -11,7 +11,7 @@ export default function ConfirmEmail({
   initialEmail = "",
 }: ConfirmEmailProps) {
   const [email, setEmail] = useState(initialEmail);
-
+  //use saved email if it exists
   useEffect(() => {
     if (initialEmail) {
       setEmail(initialEmail);
@@ -33,9 +33,15 @@ export default function ConfirmEmail({
       <Input
         value={email}
         onChange={handleEmailChange}
-        sx={{ color: "white" }}
+        sx={{
+          color: "white",
+          outline: "none",
+          border: "none",
+          "&:focus": { outline: "none" },
+        }}
+        disableUnderline
         placeholder="Please enter your email"
-        className="w-full text-white px-4 py-5 md:max-h-[57px] max-h-[47px] bg-primary-background border-none rounded-md focus:outline-none focus:ring-0 placeholder:text-white placeholder:text-sm placeholder:font-bold placeholder:leading-[18.2]"
+        className="w-full text-white px-4 py-5 md:max-h-[57px] max-h-[47px] bg-primary-background border-none rounded-md outline-none ring-0 placeholder:text-white placeholder:text-sm placeholder:font-bold placeholder:leading-[18.2]"
       />
     </div>
   );

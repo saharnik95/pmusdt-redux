@@ -43,7 +43,7 @@ export default function CompleteLevelDefault() {
             <Select
               value={selectedNetwork}
               onChange={handleNetworkChange}
-              className="sm:w-[126px] px-4 w-full bg-[#1D8D94] text-white rounded-t-[10px] sm:rounded-t-none sm:rounded-l-[10px]"
+              className="sm:w-[126px] w-full bg-[#1D8D94] text-white rounded-t-[10px] sm:rounded-t-none sm:rounded-l-[10px]"
               sx={{
                 color: "white",
                 fontWeight: 700,
@@ -54,13 +54,20 @@ export default function CompleteLevelDefault() {
                 borderTopLeftRadius: "10px",
                 borderBottomLeftRadius: "10px",
                 "& .MuiSelect-select": {
-                  padding: { xs: "16px", sm: "16px" },
+                  padding: "16px",
+                  paddingRight: "40px", // Add space for the icon
+                  display: "flex",
+                  alignItems: "center",
                 },
                 "& .MuiSvgIcon-root": {
                   display: "none",
                 },
                 "& .MuiOutlinedInput-notchedOutline": {
                   border: "none",
+                },
+                "& .MuiSelect-icon": {
+                  right: "12px",
+                  color: "white",
                 },
               }}
               MenuProps={{

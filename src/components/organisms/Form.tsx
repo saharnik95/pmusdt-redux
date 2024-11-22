@@ -18,7 +18,6 @@ interface FormField<T extends FieldValues> {
   name: Path<T>;
   label: string;
   type: string;
-  rules?: { required: string };
   placeholder?: string;
 }
 
@@ -48,15 +47,17 @@ export default function Form<T extends z.ZodType<any, any>>({
   showForgotPassword = false,
 }: FormProps<T>) {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+
   type FormData = z.infer<T>;
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    setError: formSetError,
+    setError,
+    clearErrors,
     setValue,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -68,22 +69,26 @@ export default function Form<T extends z.ZodType<any, any>>({
 
   const handleFormSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     setIsLoading(true);
-    setError(null);
+    setFormError(null);
+    clearErrors();
     try {
       await onSubmit(data, keepLoggedIn);
     } catch (err) {
       if (err && typeof err === "object") {
         Object.entries(err).forEach(([key, message]) => {
-          formSetError(key as Path<FormData>, {
-            type: "manual",
-            message: message as string,
-          });
+          if (key === "form") {
+            setFormError(message as string);
+          } else {
+            setError(key as Path<FormData>, {
+              type: "manual",
+              message: message as string,
+            });
+          }
         });
       } else {
-        formSetError("root" as Path<FormData>, {
-          type: "manual",
-          message: err instanceof Error ? err.message : "An error occurred",
-        });
+        setFormError(
+          err instanceof Error ? err.message : "An unexpected error occurred"
+        );
       }
     } finally {
       setIsLoading(false);
@@ -92,10 +97,11 @@ export default function Form<T extends z.ZodType<any, any>>({
 
   const handleClearInput = (fieldName: Path<FormData>) => {
     setValue(fieldName, "" as any);
+    clearErrors(fieldName);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-form-background rounded-[30px] pt-8 pb-12 px-6 lg:w-[560px] md:w-[500px] w-[340px] ">
+    <div className="flex flex-col items-center justify-center bg-form-background rounded-[30px] pt-8 pb-12 px-6 lg:w-[560px] md:w-[500px] w-[340px]">
       <Typography
         component="h1"
         variant="FB"
@@ -104,6 +110,7 @@ export default function Form<T extends z.ZodType<any, any>>({
       >
         {title}
       </Typography>
+
       <form
         onSubmit={handleSubmit(handleFormSubmit)}
         className="w-full space-y-[27px]"
@@ -113,7 +120,6 @@ export default function Form<T extends z.ZodType<any, any>>({
             key={field.name}
             name={field.name}
             control={control}
-            rules={field.rules}
             render={({ field: { onChange, value } }) => (
               <Input
                 label={field.label}
@@ -129,8 +135,9 @@ export default function Form<T extends z.ZodType<any, any>>({
             )}
           />
         ))}
+
         {(showKeepLoggedIn || showForgotPassword) && (
-          <div className="flex justify-between items-center ">
+          <div className="flex justify-between items-center">
             {showKeepLoggedIn && (
               <FormControlLabel
                 control={
@@ -142,14 +149,13 @@ export default function Form<T extends z.ZodType<any, any>>({
                       color: "#5B5F5E",
                       "&.Mui-checked": {
                         color: "#1D8D94",
-                        backgroundColor: "",
                       },
                     }}
                   />
                 }
                 label={
                   <Typography variant="FI" sx={{ color: "#ABABAB" }}>
-                    Keep Me Login
+                    Keep Me Logged In
                   </Typography>
                 }
               />
@@ -169,13 +175,14 @@ export default function Form<T extends z.ZodType<any, any>>({
             )}
           </div>
         )}
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {formError && <p className="text-sm text-[#F66066]">{formError}</p>}
         <div className="pt-4">
           <Button disabled={isLoading}>
             {isLoading ? "Loading..." : submitButtonText}
           </Button>
         </div>
       </form>
+
       {footerText && footerLinkText && footerLinkTo && (
         <FormFooter
           text={footerText}
