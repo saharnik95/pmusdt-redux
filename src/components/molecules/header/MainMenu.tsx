@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AppBar, Toolbar, useMediaQuery, useTheme } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 import MenuToggle from "@/components/atoms/header/MenuToggle";
 import MobileMenu from "./MobileMenu";
 import MenuItem from "@/components/atoms/header/MenuItem";
@@ -23,7 +23,7 @@ export default function MainMenu() {
             <MobileMenu isOpen={mobileOpen} onClose={handleDrawerToggle} />
           </>
         ) : (
-          <div className="flex lg:gap-8 md:gap-4">
+          <div className="flex lg:gap-[35px] md:gap-2 gap-1 xl:mr-[80px] ">
             <MenuItem href="/">Home</MenuItem>
             <MenuItem href="/about">About Us</MenuItem>
             <MenuItem href="/contact">Contact Us</MenuItem>

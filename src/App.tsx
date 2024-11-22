@@ -24,9 +24,9 @@ export default function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
 
-          <div className="flex flex-col items-center w-full min-h-screen justify-between bg-primary-background">
+          <div className="flex flex-col items-center w-full justify-between bg-primary-background">
             <Header />
-            <main className="flex flex-1 w-full justify-center items-center">
+            <main className="flex min-h-screen flex-1 w-full justify-center items-center max-w-[1140px] mx-auto">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />

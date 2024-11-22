@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
@@ -17,13 +16,12 @@ export default function Register() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // The `name` property now strictly matches the keys defined in the schema
-  const fields: {
+  const fields: Array<{
     name: keyof RegisterFormData;
     label: string;
     type: string;
     placeholder: string;
-  }[] = [
+  }> = [
     {
       name: "name",
       label: "Name",
@@ -51,9 +49,12 @@ export default function Register() {
         data.email,
         data.password
       );
-      login(user.name, user.email, user.password);
+      login(user.name, user.email, user.password, false); // Added 'false' for keepLoggedIn
       navigate("/");
     } catch (error) {
+      const errorMsg =
+        error || "An error occurred while changing the password.";
+      alert(errorMsg);
       console.error("Registration failed:", error);
     }
   };

@@ -1,14 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+interface User {
+  name: string;
+  email: string;
+}
+
 interface AuthContextType {
-  user: { name: string; email: string } | null;
+  user: User | null;
   login: (
     name: string,
     email: string,
     password: string,
     keepLoggedIn: boolean
-  ) => void;
+  ) => Promise<void>;
   logout: () => void;
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,37 +22,50 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setIsAuthenticated(true);
     }
   }, []);
 
-  const login = (
+  const login = async (
     name: string,
     email: string,
     password: string,
     keepLoggedIn: boolean
   ) => {
-    const userData = { name, email };
-    setUser(userData);
-    if (keepLoggedIn) {
-      localStorage.setItem("user", JSON.stringify(userData));
+    try {
+      const userData: User = { name, email };
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      if (keepLoggedIn) {
+        localStorage.setItem("user", JSON.stringify(userData));
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
     }
   };
 
   const logout = () => {
     setUser(null);
+    setIsAuthenticated(false);
     localStorage.removeItem("user");
+    // Clear any other stored data related to the user session
+    localStorage.removeItem("currentLevel");
+    localStorage.removeItem("exchangeInfo");
+    localStorage.removeItem("timerStatus");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

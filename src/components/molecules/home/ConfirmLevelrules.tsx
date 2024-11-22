@@ -1,7 +1,6 @@
 import { Button, Typography } from "@mui/material";
-import React from "react";
 
-export default function () {
+export default function ExchangeConditions() {
   const exchangeProcessSteps = [
     {
       id: 1,
@@ -27,6 +26,7 @@ export default function () {
       text: "Pay for the application according to the instructions on the website.",
     },
   ];
+
   return (
     <div className="flex flex-col">
       <Typography variant="FT" className="text-white pb-5 pt-10">
@@ -34,22 +34,40 @@ export default function () {
       </Typography>
 
       {exchangeProcessSteps.map((step) => (
-        <div key={step.id} className="flex  gap-3 mt-3">
+        <div
+          key={step.id}
+          className="flex items-start justify-start gap-3 mt-3"
+        >
           <Button
             sx={{
               backgroundColor: "#1D8D94",
               color: "white",
-              borderRadius: "100%",
+              borderRadius: "50%",
+              minWidth: "26px",
+              minHeight: "26px",
               width: "26px",
               height: "26px",
+              padding: 0,
               fontWeight: 700,
               fontSize: "14px",
-              lineClamp: "18.2px",
+              lineHeight: 1,
+              flexShrink: 0,
             }}
           >
             {step.id}
           </Button>
-          <Typography variant="FR" className="text-white">
+          <Typography
+            variant="FR"
+            className="text-white"
+            sx={{
+              fontSize: {
+                xs: "12px",
+                sm: "14px",
+                md: "16px",
+              },
+              lineHeight: 1.3,
+            }}
+          >
             {step.text}
           </Typography>
         </div>

@@ -1,13 +1,12 @@
-import React from "react";
 import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import LoginRegisterIcon from "@/components/atoms/header/LoginRegisterIcon";
 import LoginOrRegister from "@/components/atoms/header/LoginOrRegister";
+import PersonIconComponent from "@/components/icons/PersonIconComponent";
 
 export default function LoginAndRegister() {
   return (
     <div className="flex items-center gap-x-3">
-      <LoginRegisterIcon />
+      <PersonIconComponent />
       <div className="flex">
         <Link to="/login" style={{ textDecoration: "none" }}>
           <LoginOrRegister label="Login " />

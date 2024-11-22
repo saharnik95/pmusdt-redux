@@ -1,3 +1,15 @@
+html,
 body {
   font-family: "Niramit", sans-serif !important;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  height: 100%; /* Ensure full height usage */
+}
+input:-webkit-autofill {
+  background-color: #1a1a1a !important; /* Match your custom background color */
+  color: white !important; /* Match your custom text color */
+  font-weight: bold; /* Match your custom font style */
+  -webkit-text-fill-color: white !important; /* Ensures text color is applied */
+  transition: background-color 5000s ease-in-out 0s; /* Prevents flash of white */
 }

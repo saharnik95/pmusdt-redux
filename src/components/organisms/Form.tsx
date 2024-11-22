@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   useForm,
   Controller,
@@ -9,7 +9,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { z } from "zod";
-import { Typography, Box, Checkbox, FormControlLabel } from "@mui/material";
+import { Typography, Checkbox, FormControlLabel } from "@mui/material";
 import Button from "@/components/atoms/form/Button";
 import Input from "@/components/atoms/form/Input";
 import FormFooter from "@/components/molecules/form/FormFooter";
@@ -95,18 +95,18 @@ export default function Form<T extends z.ZodType<any, any>>({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-form-background rounded-[30px] pt-8 pb-12 px-6 lg:max-w-[560px] md:max-w-[480px] max-w-[340px] w-full ">
+    <div className="flex flex-col items-center justify-center bg-form-background rounded-[30px] pt-8 pb-12 px-6 lg:w-[560px] md:w-[500px] w-[340px] ">
       <Typography
         component="h1"
         variant="FB"
         align="center"
-        className="text-primary-foreground text-center font-niramit text-transparent bg-clip-text bg-gradient-to-r from-[#1D8D94] to-[#99D9A6] pb-8"
+        className="text-primary-foreground text-center font-niramit text-transparent bg-clip-text bg-gradient-to-r from-[#1D8D94] to-[#99D9A6] pb-[31px]"
       >
         {title}
       </Typography>
       <form
         onSubmit={handleSubmit(handleFormSubmit)}
-        className="w-full space-y-7"
+        className="w-full space-y-[27px]"
       >
         {fields.map((field) => (
           <Controller
@@ -138,7 +138,7 @@ export default function Form<T extends z.ZodType<any, any>>({
                     checked={keepLoggedIn}
                     onChange={(e) => setKeepLoggedIn(e.target.checked)}
                     sx={{
-                      padding: 0,
+                      paddingLeft: 1,
                       color: "#5B5F5E",
                       "&.Mui-checked": {
                         color: "#1D8D94",
@@ -170,9 +170,11 @@ export default function Form<T extends z.ZodType<any, any>>({
           </div>
         )}
         {error && <p className="text-sm text-red-500">{error}</p>}
-        <Button disabled={isLoading}>
-          {isLoading ? "Loading..." : submitButtonText}
-        </Button>
+        <div className="pt-4">
+          <Button disabled={isLoading}>
+            {isLoading ? "Loading..." : submitButtonText}
+          </Button>
+        </div>
       </form>
       {footerText && footerLinkText && footerLinkTo && (
         <FormFooter

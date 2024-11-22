@@ -32,7 +32,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center my-[150px]">
+    <div className="flex lg:my-[152px] items-center justify-center  bg-primary-background">
       <Form
         title="Forgot Password"
         fields={fields}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
@@ -36,6 +36,7 @@ export default function ChangePassword() {
       setErrorMessage(
         "Email not provided. Please start from the forgot password page."
       );
+      alert(errorMessage);
     }
   }, [location]);
 
@@ -62,9 +63,11 @@ export default function ChangePassword() {
   const onSubmit = async (data: ChangePasswordFormData): Promise<void> => {
     try {
       if (!email) {
-        throw new Error(
-          "Email not provided. Please start from the forgot password page."
-        );
+        const message =
+          "Email not provided. Please start from the forgot password page.";
+        setErrorMessage(message);
+        alert(message);
+        throw new Error(message);
       }
 
       const response = await authService.changePassword(
@@ -85,20 +88,15 @@ export default function ChangePassword() {
       navigate("/login");
     } catch (error: any) {
       console.error("Error occurred:", error);
-      setErrorMessage(error.message);
+      const errorMsg =
+        error.message || "An error occurred while changing the password.";
+      setErrorMessage(errorMsg);
+      alert(errorMsg);
     }
   };
 
-  if (errorMessage) {
-    return (
-      <div className="flex items-center justify-center my-[150px]">
-        <div className="text-red-500">{errorMessage}</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex items-center justify-center my-[150px]">
+    <div className="flex lg:my-[152px] items-center justify-center  bg-primary-background">
       <Form
         title="Change Password"
         fields={fields}

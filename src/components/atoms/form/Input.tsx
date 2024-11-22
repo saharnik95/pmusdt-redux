@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Eye, EyeOff, X } from "lucide-react"; // Import the cross icon
+import { Eye, EyeOff } from "lucide-react"; // Import the cross icon
 import { Typography } from "@mui/material";
 import CrossIconComponent from "@/components/icons/CrossIconComponent";
 
@@ -32,8 +32,11 @@ export default function Input({
   };
 
   return (
-    <div className="mb-4">
-      <label htmlFor={name} className="block font-medium text-form-text mb-2">
+    <div className="">
+      <label
+        htmlFor={name}
+        className="block font-medium text-form-text mb-[15px]"
+      >
         <Typography variant="FI">{label}</Typography>
       </label>
       <div className="relative">

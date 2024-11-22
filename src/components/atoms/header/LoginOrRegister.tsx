@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Typography } from "@mui/material";
 
 const LoginOrRegister = ({ label }: { label: string }) => (

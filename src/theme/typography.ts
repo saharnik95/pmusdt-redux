@@ -12,6 +12,8 @@ declare module "@mui/material/styles" {
     FH: CSSObject;
     FT: CSSObject;
     FR: CSSObject;
+    SH: CSSObject;
+    SB: CSSObject;
   }
 
   interface TypographyVariantsOptions {
@@ -24,6 +26,8 @@ declare module "@mui/material/styles" {
     FH: CSSObject;
     FT: CSSObject;
     FR: CSSObject;
+    SH: CSSObject;
+    SB: CSSObject;
   }
 }
 
@@ -38,17 +42,19 @@ declare module "@mui/material/Typography" {
     FH: true;
     FT: true;
     FR: true;
+    SH: true;
+    SB: true;
   }
 }
 
 const typography: TypographyOptions = {
   LM: {
     fontFamily: ' "Russo One", sans-serif',
-    fontSize: "20px",
+    fontSize: "16px",
     fontWeight: 400,
-    lineHeight: "24.1px",
-    letterSpacing: "0.2em",
-    "@media (min-width:600px)": {
+    lineHeight: "20.1px",
+    letterSpacing: "0.1em",
+    "@media (min-width:768px)": {
       fontSize: "20px",
       fontWeight: 400,
       lineHeight: "24.1px",
@@ -60,7 +66,7 @@ const typography: TypographyOptions = {
     fontSize: "16px",
     fontWeight: 400,
     lineHeight: "20.8px",
-    "@media (min-width:600px)": {
+    "@media (min-width:768px)": {
       fontSize: "16px",
       fontWeight: 400,
       lineHeight: "20.8px",
@@ -71,7 +77,7 @@ const typography: TypographyOptions = {
     fontSize: "12px",
     fontWeight: 400,
     lineHeight: "15.6px",
-    "@media (min-width:600px)": {
+    "@media (min-width:768px)": {
       fontSize: "12px",
       fontWeight: 400,
       lineHeight: "15.6px",
@@ -82,7 +88,7 @@ const typography: TypographyOptions = {
     fontSize: "24px",
     fontWeight: 700,
     lineHeight: "36.8px",
-    "@media (min-width:600px)": {
+    "@media (min-width:768px)": {
       fontSize: "36px",
       fontWeight: 700,
       lineHeight: "46.8px",
@@ -93,7 +99,7 @@ const typography: TypographyOptions = {
     fontSize: "12px",
     fontWeight: 700,
     lineHeight: "14.8px",
-    "@media (min-width:600px)": {
+    "@media (min-width:768px)": {
       fontSize: "16px",
       fontWeight: 700,
       lineHeight: "20.8px",
@@ -105,7 +111,7 @@ const typography: TypographyOptions = {
     fontSize: "12px",
     fontWeight: 400,
     lineHeight: "14.8px",
-    "@media (min-width:600px)": {
+    "@media (min-width:768px)": {
       fontSize: "14px",
       fontWeight: 400,
       lineHeight: "18.2px",
@@ -114,10 +120,10 @@ const typography: TypographyOptions = {
 
   FH: {
     fontFamily: ' "Niramit", sans-serif',
-    fontSize: "24px",
+    fontSize: "18px",
     fontWeight: 700,
-    lineHeight: "31px",
-    "@media (min-width:600px)": {
+    lineHeight: "22px",
+    "@media (min-width:768px)": {
       fontSize: "24px",
       fontWeight: 700,
       lineHeight: "31px",
@@ -125,10 +131,10 @@ const typography: TypographyOptions = {
   },
   FT: {
     fontFamily: ' "Niramit", sans-serif',
-    fontSize: "20px",
-    fontWeight: 700,
-    lineHeight: "26px",
-    "@media (min-width:600px)": {
+    fontSize: "12px",
+    fontWeight: 500,
+    lineHeight: "16px",
+    "@media (min-width:768px)": {
       fontSize: "20px",
       fontWeight: 700,
       lineHeight: "26px",
@@ -136,13 +142,38 @@ const typography: TypographyOptions = {
   },
   FR: {
     fontFamily: ' "Niramit", sans-serif',
-    fontSize: "16px",
+    fontSize: "12px",
     fontWeight: 300,
-    lineHeight: "29px",
-    "@media (min-width:600px)": {
+    lineHeight: "14px",
+    "@media (min-width:768px)": {
       fontSize: "16px",
       fontWeight: 300,
       lineHeight: "29px",
+    } as CSSObject,
+  },
+  SH: {
+    fontFamily: ' "Niramit", sans-serif',
+    fontSize: "20px",
+    fontWeight: 700,
+    lineHeight: "28px",
+    "@media (min-width:768px)": {
+      fontSize: "32px",
+      fontWeight: 700,
+      lineHeight: "41.8px",
+    } as CSSObject,
+  },
+  SB: {
+    fontFamily: ' "Niramit", sans-serif',
+    fontSize: "12px",
+    fontWeight: 500,
+    lineHeight: "18px",
+    letterSpacing: "-0.1",
+
+    "@media (min-width:768px)": {
+      fontSize: "20px",
+      fontWeight: 700,
+      lineHeight: "40px",
+      letterSpacing: "-0.1",
     } as CSSObject,
   },
 };

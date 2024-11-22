@@ -1,4 +1,5 @@
-import { Button, Typography } from "@mui/material";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const MenuItem = ({
   children,
@@ -6,19 +7,25 @@ const MenuItem = ({
 }: {
   children: React.ReactNode;
   href: string;
-}) => (
-  <a color="inherit" href={href}>
-    <Typography
-      className="text-primary-foreground"
-      variant="MM"
-      sx={{
-        textTransform: "none",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {children}
-    </Typography>
-  </a>
-);
+}) => {
+  {
+    /*checking which page is active */
+  }
+  const location = useLocation();
+  const isActive = location.pathname === href;
+
+  return (
+    <Link to={href} className="flex items-center gap-2 no-underline">
+      {isActive && <div className="w-2 h-2 rounded-full bg-[#40A578]" />}
+      <h3
+        className={`text-primary-foreground md:text-[16px] text-[10px] text-nowrap ${
+          isActive ? "font-bold" : "font-normal"
+        }`}
+      >
+        {children}
+      </h3>
+    </Link>
+  );
+};
 
 export default MenuItem;
