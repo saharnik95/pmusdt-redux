@@ -2,6 +2,7 @@ import ProfileIconComponent from "../icons/ProfileIconComponent";
 import PartnerIconComponent from "../icons/PartnerIconComponent";
 import ExitIconComponent from "../icons/ExitIconComponent";
 import DashboardIconComponent from "../icons/DashboardIconComponent";
+import { Typography } from "@mui/material";
 
 interface MenuItem {
   id: number;
@@ -31,5 +32,16 @@ export default function UserLeftSide() {
       name: "Exit",
     },
   ];
-  return <div className="bg-form-background lg:p-8 lg:gap-[38px]"></div>;
+  return (
+    <div className="bg-form-background lg:p-8 lg:gap-[38px]">
+      {UserMenuItems.map((item) => (
+        <div>
+          <span>
+            <item.icon />
+          </span>
+          <Typography>{item.name}</Typography>
+        </div>
+      ))}
+    </div>
+  );
 }
