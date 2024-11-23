@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
 import { authService } from "../services/authService";
-import { useAuth } from "@/services/authContext";
+import { useAuth } from "@/context/authContext";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -67,7 +67,7 @@ export default function Register() {
         schema={registerSchema}
         onSubmit={onSubmit}
         submitButtonText="Register"
-        footerText="Already have an account?"
+        footerText="Have an account?"
         footerLinkText="Login"
         footerLinkTo="/login"
       />

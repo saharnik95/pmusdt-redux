@@ -22,11 +22,13 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
     "running" | "success" | "failed"
   >("running");
   const [restartTimer, setRestartTimer] = useState(false);
-
+  //Restarting Timer when exchange Info Changes
   useEffect(() => {
     setTimerStatus("running");
     setRestartTimer(true);
   }, [exchangeInfo]);
+
+  //Restarting Timer when restartTimer Changes
 
   useEffect(() => {
     if (restartTimer) {
@@ -34,6 +36,7 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
     }
   }, [restartTimer]);
 
+  //Hnadling Timer
   const handleTimerComplete = (status: "success" | "failed") => {
     console.log(`Timer completed with status: ${status}`);
     setTimerStatus(status);
@@ -52,6 +55,7 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
     setTimerStatus("failed");
   };
 
+  //Getting Images
   const getCurrencyImage = (currency: string) => {
     switch (currency) {
       case "USDT(TRC20)":
@@ -80,6 +84,8 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
       </div>
 
       <div className="flex flex-row justify-between items-center lg:mt-[54px]">
+        {/*Send*/}
+
         <Typography variant="FT" className="text-footer-text">
           Send :{" "}
         </Typography>
@@ -98,6 +104,8 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
         </div>
       </div>
       <div className="flex flex-row justify-between items-center lg:mt-4">
+        {/*Recieve*/}
+
         <Typography variant="FT" className="text-footer-text">
           Receive :{" "}
         </Typography>
@@ -108,7 +116,7 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
           <img
             src={getCurrencyImage(exchangeInfo.toCurrency)}
             alt={exchangeInfo.toCurrency}
-            className="w-6 h-6 mr-2 rounded-full"
+            className="w-6 h-6 m-3 rounded-full"
           />
           <Typography variant="FT" className="text-white">
             {exchangeInfo.toCurrency}
@@ -119,6 +127,9 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
         orientation="horizontal"
         sx={{ width: "100%", backgroundColor: "#596B89", mx: 1, mt: "34px" }}
       />
+
+      {/*Rendering bottom Part Based of t or p and success and failed*/}
+
       {timerStatus === "running" &&
         (exchangeInfo.fromCurrency === "Perfect Money" ? (
           <CompleteLevelPtoT exchangeInfo={exchangeInfo} />
@@ -129,6 +140,9 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
       {timerStatus === "failed" && (
         <CompleteLevelFailure onRestart={handleRestart} />
       )}
+
+      {/*Buttons to setting success and failure*/}
+
       {timerStatus === "running" && (
         <div className="flex justify-center gap-4 mt-6">
           <Button

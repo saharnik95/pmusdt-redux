@@ -1,7 +1,7 @@
 import Logo from "../atoms/header/Logo";
 import MainMenu from "../molecules/header/MainMenu";
 import LoginAndRegister from "../molecules/header/LoginAndRegister";
-import { useAuth } from "@/services/authContext";
+import { useAuth } from "@/context/authContext";
 import { Typography } from "@mui/material";
 import PersonIconComponent from "../icons/PersonIconComponent";
 
@@ -18,7 +18,7 @@ export default function Header() {
         <MainMenu />
       </div>
       {user ? (
-        <div className="flex items-center md:gap-4  gap-2 order-3">
+        <div className="flex items-center md:gap-4  gap-2 order-2 md:order-">
           <span onClick={logout} className="cursor-pointer">
             <PersonIconComponent />
           </span>
@@ -28,12 +28,6 @@ export default function Header() {
           >
             {user.name}
           </Typography>
-          {/* Uncomment if Logout is needed */}
-          {/* <button onClick={logout} className="">
-            <Typography className="text-primary-foreground" variant="MM">
-              Logout
-            </Typography>
-          </button> */}
         </div>
       ) : (
         <div className="md:order-3 md:flex hidden">

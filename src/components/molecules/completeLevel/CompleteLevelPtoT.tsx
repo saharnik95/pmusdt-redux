@@ -128,7 +128,7 @@ export default function CompleteLevelPtoT({
               borderBottomLeftRadius: "10px",
               "& .MuiSelect-select": {
                 padding: "16px",
-                paddingRight: "40px", // Add space for the icon
+                paddingRight: "40px",
                 display: "flex",
                 alignItems: "center",
               },

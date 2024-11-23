@@ -29,12 +29,12 @@ export default function CompleteLevelFailure({
       <Button
         sx={{
           width: {
-            xs: "100px", // small screens (extra small and up)
-            md: "173px", // medium screens and up
+            xs: "100px",
+            md: "173px",
           },
           padding: {
-            xs: "12px", // small screens (extra small and up)
-            md: "20px", // medium screens and up
+            xs: "12px",
+            md: "20px",
           },
           marginTop: "30px",
           borderRadius: "10px",

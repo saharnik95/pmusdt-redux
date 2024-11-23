@@ -2,8 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
 import { authService } from "../services/authService";
-import { useAuth } from "@/services/authContext";
+import { useAuth } from "@/context/authContext";
 
+//Defining loginschema
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -15,6 +16,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  //Defining Formfields
   const fields: {
     name: keyof LoginFormData;
     label: string;
@@ -35,6 +37,7 @@ export default function Login() {
     },
   ];
 
+  //Handling onSubmit
   const onSubmit = async (data: LoginFormData, keepLoggedIn: boolean) => {
     try {
       loginSchema.parse(data);
@@ -67,7 +70,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-primary-background">
+    <div className="flex lg:my-[152px] items-center justify-center  bg-primary-background">
       <Form
         title="Login"
         fields={fields}

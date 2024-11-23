@@ -31,7 +31,6 @@ export default function CompleteLevelDefault() {
 
   return (
     <div className="flex flex-col mt-6 lg:mt-[56px]">
-      {/* Top part */}
       <div className="flex flex-col lg:flex-row lg:items-start items-center lg:gap-12 gap-6">
         <div className="flex flex-col justify-between w-full lg:w-auto">
           <Typography variant="SB" className="text-footer-text text-wrap mb-4">
@@ -39,7 +38,9 @@ export default function CompleteLevelDefault() {
             Tether to the Tether Address Below:
           </Typography>
 
-          <div className="w-full flex flex-col sm:flex-row">
+          {/* Select */}
+
+          <div className="w-full flex flex-col sm:flex-row mt-[38px]">
             <Select
               value={selectedNetwork}
               onChange={handleNetworkChange}
@@ -55,7 +56,7 @@ export default function CompleteLevelDefault() {
                 borderBottomLeftRadius: "10px",
                 "& .MuiSelect-select": {
                   padding: "16px",
-                  paddingRight: "40px", // Add space for the icon
+                  paddingRight: "40px",
                   display: "flex",
                   alignItems: "center",
                 },
@@ -93,6 +94,9 @@ export default function CompleteLevelDefault() {
                 </MenuItem>
               ))}
             </Select>
+
+            {/* ADDRESS */}
+
             <span className="bg-primary-background w-full p-2 sm:p-4 rounded-b-[10px] sm:rounded-b-none sm:rounded-r-[10px] break-all">
               <Typography
                 variant="FI"
@@ -103,6 +107,8 @@ export default function CompleteLevelDefault() {
             </span>
           </div>
         </div>
+
+        {/* QR CODE */}
 
         <div className="mt-4 lg:mt-0 flex-shrink-0">
           <img

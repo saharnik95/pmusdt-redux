@@ -8,6 +8,7 @@ interface TopBarProps {
 }
 
 export default function TopBar({ currentLevel, setCurrentLevel }: TopBarProps) {
+  //If user wants to go to lower Level,But if wants to go Higher Level cant
   const handleLevelClick = (level: number) => {
     if (level <= currentLevel) {
       setCurrentLevel(level);
@@ -32,10 +33,10 @@ export default function TopBar({ currentLevel, setCurrentLevel }: TopBarProps) {
               orientation="horizontal"
               sx={{
                 width: {
-                  xs: "0px", // small screens (extra small and up)
-                  sm: "45px", // small screens and up
-                  md: "70px", // medium screens and up
-                  lg: "100px", // large screens and up
+                  xs: "0px",
+                  sm: "45px",
+                  md: "70px",
+                  lg: "100px",
                 },
                 backgroundColor: currentLevel > level ? "#40A578" : "#596B89",
                 mx: 2,

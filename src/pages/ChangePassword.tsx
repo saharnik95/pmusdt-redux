@@ -1,45 +1,49 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Location } from "react-router-dom";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
 import { authService } from "../services/authService";
-import { useAuth } from "@/services/authContext";
+import { useAuth } from "@/context/authContext";
 
+// Defining changePasswordSchema
 const changePasswordSchema = z
   .object({
-    newPassword: z
-      .string()
-      .min(6, "New password must be at least 6 characters"),
+    password: z.string().min(6, "New password must be at least 6 characters"),
     confirmPassword: z
       .string()
       .min(6, "Confirm password must be at least 6 characters"),
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
+interface LocationState {
+  email?: string;
+}
+
 export default function ChangePassword() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation() as Location & { state: LocationState };
   const { logout } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
 
+  // Getting Email From Last Page and Checking if it exists
   useEffect(() => {
-    const state = location.state as { email?: string } | undefined;
-    if (state && state.email) {
-      setEmail(state.email);
+    if (location.state && location.state.email) {
+      setEmail(location.state.email);
     } else {
-      setErrorMessage(
-        "Email not provided. Please start from the forgot password page."
-      );
-      alert(errorMessage);
+      const message =
+        "Email not provided. Please start from the forgot password page.";
+      setErrorMessage(message);
+      alert(message);
     }
   }, [location]);
 
+  // Defining Formfields
   const fields: {
     name: keyof ChangePasswordFormData;
     label: string;
@@ -47,7 +51,7 @@ export default function ChangePassword() {
     placeholder: string;
   }[] = [
     {
-      name: "newPassword",
+      name: "password",
       label: "New Password",
       type: "password",
       placeholder: "Enter your new password",
@@ -60,6 +64,7 @@ export default function ChangePassword() {
     },
   ];
 
+  // Handling submit
   const onSubmit = async (data: ChangePasswordFormData): Promise<void> => {
     try {
       if (!email) {
@@ -70,10 +75,7 @@ export default function ChangePassword() {
         throw new Error(message);
       }
 
-      const response = await authService.changePassword(
-        email,
-        data.newPassword
-      );
+      const response = await authService.changePassword(email, data.password);
       console.log("Password change response:", response);
 
       // Alert user
@@ -86,17 +88,19 @@ export default function ChangePassword() {
 
       // Navigate to login page
       navigate("/login");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error occurred:", error);
-      const errorMsg =
-        error.message || "An error occurred while changing the password.";
+      let errorMsg = "An error occurred while changing the password.";
+      if (error instanceof Error) {
+        errorMsg = error.message;
+      }
       setErrorMessage(errorMsg);
       alert(errorMsg);
     }
   };
 
   return (
-    <div className="flex lg:my-[152px] items-center justify-center  bg-primary-background">
+    <div className="flex lg:my-[152px] items-center justify-center bg-primary-background">
       <Form
         title="Change Password"
         fields={fields}

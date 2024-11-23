@@ -11,7 +11,7 @@ import "./styles/index.css";
 import Footer from "./components/organisms/Footer";
 import ForgotPassword from "./pages/ForgotPassword";
 import ChangePassword from "./pages/ChangePassword";
-import { AuthProvider } from "@/services/authContext"; // Import the AuthProvider
+import { AuthProvider } from "@/context/authContext"; // Import the AuthProvider
 
 export default function App() {
   return (

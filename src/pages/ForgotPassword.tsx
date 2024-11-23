@@ -3,6 +3,8 @@ import { z } from "zod";
 import Form from "../components/organisms/Form";
 import { authService } from "../services/authService";
 
+//Defining forgotPasswordSchema
+
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
@@ -12,6 +14,7 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export default function ForgotPassword() {
   const navigate = useNavigate();
 
+  //Defining Formfields
   const fields: {
     name: keyof ForgotPasswordFormData;
     label: string;
@@ -26,11 +29,15 @@ export default function ForgotPassword() {
     },
   ];
 
+  //Handling onSubmit
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       forgotPasswordSchema.parse(data);
       await authService.forgotPassword(data.email);
       navigate("/change-password", { state: { email: data.email } });
+      {
+        /*sending Email as an State to next Page */
+      }
     } catch (error) {
       // Handle Zod validation errors
       if (error instanceof z.ZodError) {
@@ -45,7 +52,7 @@ export default function ForgotPassword() {
         if (error.message === "EMAIL_NOT_FOUND") {
           throw { email: "No account found with this email address" };
         } else {
-          throw { form: "Failed to send reset email. Please try again." };
+          throw { form: "No account found with this email address" };
         }
       } else {
         // Handle generic unexpected errors
@@ -62,9 +69,6 @@ export default function ForgotPassword() {
         schema={forgotPasswordSchema}
         onSubmit={onSubmit}
         submitButtonText="Confirm"
-        footerText="Remember your password?"
-        footerLinkText="Login"
-        footerLinkTo="/login"
       />
     </div>
   );

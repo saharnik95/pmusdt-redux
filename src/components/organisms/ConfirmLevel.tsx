@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button, Checkbox, Divider, Typography } from "@mui/material";
-import ConfirmLevelrules from "../molecules/home/ConfirmLevelrules";
+import ConfirmLevelrules from "../molecules/confirmLevel/ConfirmLevelrules";
 import ConfirmEmail from "../molecules/confirmLevel/ConfirmEmail";
 import { Check } from "lucide-react";
 
@@ -33,7 +33,7 @@ export default function ConfirmLevel({
     }
   }, []);
 
-  //Handle Confitm
+  //Handle Confirm
   const handleConfirm = () => {
     if (!agreed) {
       alert("Please agree to the terms.");

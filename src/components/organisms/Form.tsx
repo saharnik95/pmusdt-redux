@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useForm,
   Controller,
@@ -13,7 +13,9 @@ import { Typography, Checkbox, FormControlLabel } from "@mui/material";
 import Button from "@/components/atoms/form/Button";
 import Input from "@/components/atoms/form/Input";
 import FormFooter from "@/components/molecules/form/FormFooter";
+import { checkPasswordStrength } from "@/utils/PasswordStrength";
 
+//Defining InterFaces
 interface FormField<T extends FieldValues> {
   name: Path<T>;
   label: string;
@@ -49,9 +51,10 @@ export default function Form<T extends z.ZodType<any, any>>({
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState<string>("");
 
+  //Initializing default field values
   type FormData = z.infer<T>;
-
   const {
     control,
     handleSubmit,
@@ -59,6 +62,7 @@ export default function Form<T extends z.ZodType<any, any>>({
     setError,
     clearErrors,
     setValue,
+    watch,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: fields.reduce((acc, field) => {
@@ -67,6 +71,7 @@ export default function Form<T extends z.ZodType<any, any>>({
     }, {} as FormData),
   });
 
+  //Hnadling FormSubmit
   const handleFormSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     setIsLoading(true);
     setFormError(null);
@@ -95,13 +100,27 @@ export default function Form<T extends z.ZodType<any, any>>({
     }
   };
 
+  //Handling Input Clear
   const handleClearInput = (fieldName: Path<FormData>) => {
-    setValue(fieldName, "" as any);
+    setValue(fieldName, "" as z.infer<T>[typeof fieldName]);
     clearErrors(fieldName);
   };
 
+  // Watch for password changes
+  const watchPassword = watch("password" as Path<FormData>);
+
+  // Update password strength when password changes
+  useEffect(() => {
+    if (watchPassword) {
+      setPasswordStrength(checkPasswordStrength(watchPassword));
+    } else {
+      setPasswordStrength("");
+    }
+  }, [watchPassword]);
+
   return (
     <div className="flex flex-col items-center justify-center bg-form-background rounded-[30px] pt-8 pb-12 px-6 lg:w-[560px] md:w-[500px] w-[340px]">
+      {/*Header*/}
       <Typography
         component="h1"
         variant="FB"
@@ -111,9 +130,11 @@ export default function Form<T extends z.ZodType<any, any>>({
         {title}
       </Typography>
 
+      {/*Form*/}
+
       <form
         onSubmit={handleSubmit(handleFormSubmit)}
-        className="w-full space-y-[27px]"
+        className="w-full flex flex-col gap-y-[22px] "
       >
         {fields.map((field) => (
           <Controller
@@ -121,20 +142,40 @@ export default function Form<T extends z.ZodType<any, any>>({
             name={field.name}
             control={control}
             render={({ field: { onChange, value } }) => (
-              <Input
-                label={field.label}
-                name={field.name}
-                type={field.type}
-                value={value || ""}
-                onChange={onChange}
-                onClear={() => handleClearInput(field.name)}
-                error={!!errors[field.name]}
-                helperText={errors[field.name]?.message as string}
-                placeholder={field.placeholder}
-              />
+              <div className="relative">
+                <Input
+                  label={field.label}
+                  name={field.name}
+                  type={field.type}
+                  value={value || ""}
+                  onChange={onChange}
+                  onClear={() => handleClearInput(field.name)}
+                  error={!!errors[field.name]}
+                  helperText={errors[field.name]?.message as string}
+                  placeholder={field.placeholder}
+                />
+                {field.type === "password" && passwordStrength && (
+                  <span className="">
+                    <Typography
+                      variant="FI"
+                      className={`absolute right-0 bottom-[-30px] ${
+                        passwordStrength === "Strong"
+                          ? "text-[#6EC207]"
+                          : passwordStrength === "Medium"
+                          ? "text-[#FF6600]"
+                          : "text-[#F66066]"
+                      }`}
+                    >
+                      {passwordStrength}
+                    </Typography>
+                  </span>
+                )}
+              </div>
             )}
           />
         ))}
+
+        {/*Keep Login AND ShowForgotPassword */}
 
         {(showKeepLoggedIn || showForgotPassword) && (
           <div className="flex justify-between items-center">
@@ -146,6 +187,8 @@ export default function Form<T extends z.ZodType<any, any>>({
                     onChange={(e) => setKeepLoggedIn(e.target.checked)}
                     sx={{
                       paddingLeft: 1,
+                      paddingTop: 0,
+                      paddingBottom: 0,
                       color: "#5B5F5E",
                       "&.Mui-checked": {
                         color: "#1D8D94",
@@ -160,6 +203,7 @@ export default function Form<T extends z.ZodType<any, any>>({
                 }
               />
             )}
+
             {showForgotPassword && (
               <Link
                 to="/forgot-password"
@@ -175,13 +219,20 @@ export default function Form<T extends z.ZodType<any, any>>({
             )}
           </div>
         )}
+
+        {/*Submit Button */}
+
         {formError && <p className="text-sm text-[#F66066]">{formError}</p>}
         <div className="pt-4">
           <Button disabled={isLoading}>
-            {isLoading ? "Loading..." : submitButtonText}
+            <Typography variant="FI" className="text-white">
+              {isLoading ? "Loading..." : submitButtonText}
+            </Typography>
           </Button>
         </div>
       </form>
+
+      {/*Footer */}
 
       {footerText && footerLinkText && footerLinkTo && (
         <FormFooter

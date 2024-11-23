@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Button, CircularProgress, SelectChangeEvent } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import ExchangeLevelDiv from "@/components/molecules/exchangeLevel/ExchangeLevelDiv";
 
 interface ExchangeInfo {
@@ -201,11 +206,13 @@ export default function ExchangeLevel({
           onClick={handleExchange}
           disabled={!!fromError || isLoading || !fromValue}
         >
-          {isLoading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "Make Exchange"
-          )}
+          <Typography variant="FI" className="text-white">
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Make Exchange"
+            )}
+          </Typography>
         </Button>
       </div>
     </div>

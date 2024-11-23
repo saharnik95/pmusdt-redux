@@ -3,7 +3,7 @@ import ConfirmLevel from "@/components/organisms/ConfirmLevel";
 import ExchangeLevel from "@/components/organisms/ExchangeLevel";
 import CompleteLevel from "@/components/organisms/CompleteLevel";
 import TopBar from "@/components/organisms/TopBar";
-import { useAuth } from "@/services/authContext";
+import { useAuth } from "@/context/authContext";
 
 interface ExchangeInfo {
   fromAmount: string;
@@ -56,14 +56,19 @@ export default function Home() {
     }
   }, [currentLevel, exchangeInfo, isAuthenticated]);
 
+  //Handling Going On next Levels
   const handleNextLevel = () => {
     setCurrentLevel((prev) => Math.min(prev + 1, 3));
   };
+
+  //Handling updating exchangeInfo
 
   const handleExchangeInfoUpdate = (info: ExchangeInfo) => {
     setExchangeInfo(info);
     handleNextLevel();
   };
+
+  //Handling Rendering Levels
 
   const renderLevel = () => {
     switch (currentLevel) {
