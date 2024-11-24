@@ -21,6 +21,7 @@ interface FormField<T extends FieldValues> {
   label: string;
   type: string;
   placeholder?: string;
+  showPasswordStrength?: boolean;
 }
 
 interface FormProps<T extends z.ZodType<any, any>> {
@@ -34,7 +35,6 @@ interface FormProps<T extends z.ZodType<any, any>> {
   footerLinkTo?: string;
   showKeepLoggedIn?: boolean;
   showForgotPassword?: boolean;
-  showPasswordStrength?: boolean;
 }
 
 export default function Form<T extends z.ZodType<any, any>>({
@@ -48,7 +48,6 @@ export default function Form<T extends z.ZodType<any, any>>({
   footerLinkTo,
   showKeepLoggedIn = false,
   showForgotPassword = false,
-  showPasswordStrength = true,
 }: FormProps<T>) {
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -127,7 +126,7 @@ export default function Form<T extends z.ZodType<any, any>>({
         component="h1"
         variant="FB"
         align="center"
-        className="text-primary-foreground text-center font-niramit text-transparent bg-clip-text bg-gradient-to-r from-[#1D8D94] to-[#99D9A6] pb-[31px]"
+        className="text-primary-foreground text-center font-niramit text-transparent bg-clip-text bg-gradient-to-r from-form-buttonBackground to-[#99D9A6] pb-[31px]"
       >
         {title}
       </Typography>
@@ -158,16 +157,16 @@ export default function Form<T extends z.ZodType<any, any>>({
                 />
                 {field.type === "password" &&
                   passwordStrength &&
-                  showPasswordStrength && (
+                  field.showPasswordStrength && (
                     <span className="">
                       <Typography
                         variant="FI"
-                        className={`absolute right-0 bottom-[-30px] ${
-                          passwordStrength === "Strong"
+                        className={`absolute right-0 bottom-[76px] ${
+                          passwordStrength === "Strong!"
                             ? "text-[#6EC207]"
                             : passwordStrength === "Medium"
                             ? "text-[#FF6600]"
-                            : "text-[#F66066]"
+                            : "text-form-fail"
                         }`}
                       >
                         {passwordStrength}
@@ -190,12 +189,13 @@ export default function Form<T extends z.ZodType<any, any>>({
                     checked={keepLoggedIn}
                     onChange={(e) => setKeepLoggedIn(e.target.checked)}
                     sx={{
+                      borderRadius: "3px",
                       paddingLeft: 1,
                       paddingTop: 0,
                       paddingBottom: 0,
                       color: "#5B5F5E",
                       "&.Mui-checked": {
-                        color: "#1D8D94",
+                        color: "form-buttonBackground",
                       },
                     }}
                   />
@@ -211,11 +211,14 @@ export default function Form<T extends z.ZodType<any, any>>({
             {showForgotPassword && (
               <Link
                 to="/forgot-password"
-                className="text-sm text-[#1D8D94] hover:underline"
+                className="text-sm text-form-buttonBackground hover:underline"
               >
                 <Typography
                   variant="FI"
-                  sx={{ color: "#1D8D94", textDecoration: "underline" }}
+                  sx={{
+                    color: (theme) => theme.palette.form.buttonBackground,
+                    textDecoration: "underline",
+                  }}
                 >
                   Forgot your password?
                 </Typography>
@@ -226,7 +229,7 @@ export default function Form<T extends z.ZodType<any, any>>({
 
         {/*Submit Button */}
 
-        {formError && <p className="text-sm text-[#F66066]">{formError}</p>}
+        {formError && <p className="text-sm text-form-fail">{formError}</p>}
         <div className="pt-4">
           <Button disabled={isLoading}>
             <Typography variant="FI" className="text-white">

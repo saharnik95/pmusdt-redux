@@ -85,7 +85,7 @@ export default function CompleteLevelPtoT({
     <form onSubmit={handleSubmit} className="flex flex-col mt-4">
       {InputList.map(({ id, label, placeholder, name }) => (
         <div key={id} className="flex flex-col mb-3">
-          <label htmlFor={name} className="block font-medium text-form-text ">
+          <label htmlFor={name} className="block font-medium text-footer-text ">
             <Typography variant="FI">{label}</Typography>
           </label>
           <input
@@ -105,7 +105,7 @@ export default function CompleteLevelPtoT({
       <div className="mb-[15px]">
         <label
           htmlFor="network"
-          className="block font-medium text-form-text mb-[5px]"
+          className="block font-medium text-footer-text mb-[5px]"
         >
           <Typography variant="FI">
             Choose Network And Enter Tether Address :
@@ -116,7 +116,7 @@ export default function CompleteLevelPtoT({
           <Select
             value={selectedNetwork}
             onChange={handleNetworkChange}
-            className="sm:w-[126px] w-full bg-[#1D8D94] text-white rounded-t-[10px] sm:rounded-t-none sm:rounded-l-[10px]"
+            className="sm:w-[126px] w-full bg-form-buttonBackground text-white rounded-t-[10px] sm:rounded-t-none sm:rounded-l-[10px]"
             sx={{
               color: "white",
               fontWeight: 700,
@@ -146,7 +146,8 @@ export default function CompleteLevelPtoT({
             MenuProps={{
               PaperProps: {
                 sx: {
-                  backgroundColor: "#1D8D94",
+                  backgroundColor: (theme) =>
+                    theme.palette.form.buttonBackground,
                   "& .MuiMenuItem-root": {
                     color: "white",
                   },
@@ -191,7 +192,7 @@ export default function CompleteLevelPtoT({
           padding: "18px",
           borderRadius: "10px",
           boxShadow: "0px 0px 20px 0px rgba(29, 141, 148, 0.5)",
-          backgroundColor: "#1D8D94",
+          backgroundColor: (theme) => theme.palette.form.buttonBackground,
         }}
         variant="contained"
         type="submit"

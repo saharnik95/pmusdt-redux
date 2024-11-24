@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
 
-export default function ExchangeConditions() {
+export default function ConfirmLevelRules() {
   const exchangeProcessSteps = [
     {
       id: 1,
@@ -40,7 +40,7 @@ export default function ExchangeConditions() {
         >
           <Button
             sx={{
-              backgroundColor: "#1D8D94",
+              backgroundColor: (theme) => theme.palette.form.buttonBackground,
               color: "white",
               borderRadius: "50%",
               minWidth: "26px",

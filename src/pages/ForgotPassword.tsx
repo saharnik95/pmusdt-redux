@@ -4,7 +4,6 @@ import Form from "../components/organisms/Form";
 import { authService } from "../services/authService";
 
 //Defining forgotPasswordSchema
-
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
@@ -52,11 +51,11 @@ export default function ForgotPassword() {
         if (error.message === "EMAIL_NOT_FOUND") {
           throw { email: "No account found with this email address" };
         } else {
-          throw { form: "No account found with this email address" };
+          throw { email: "No account found with this email address" };
         }
       } else {
         // Handle generic unexpected errors
-        throw { form: "An unexpected error occurred" };
+        throw { email: "An unexpected error occurred" };
       }
     }
   };
@@ -69,7 +68,6 @@ export default function ForgotPassword() {
         schema={forgotPasswordSchema}
         onSubmit={onSubmit}
         submitButtonText="Confirm"
-        showPasswordStrength={false}
       />
     </div>
   );

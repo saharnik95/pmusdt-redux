@@ -42,18 +42,21 @@ export default function ChangePassword() {
     label: string;
     type: string;
     placeholder: string;
+    showPasswordStrength?: boolean;
   }[] = [
     {
       name: "password",
       label: "New Password",
       type: "password",
       placeholder: "Enter your new password",
+      showPasswordStrength: true,
     },
     {
       name: "confirmPassword",
       label: "Confirm Password",
       type: "password",
       placeholder: "Confirm your new password",
+      showPasswordStrength: false,
     },
   ];
 
@@ -100,7 +103,6 @@ export default function ChangePassword() {
         schema={changePasswordSchema}
         onSubmit={onSubmit}
         submitButtonText="Change Password"
-        showPasswordStrength={true}
       />
     </div>
   );

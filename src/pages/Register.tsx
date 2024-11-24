@@ -21,6 +21,7 @@ export default function Register() {
     label: string;
     type: string;
     placeholder: string;
+    showPasswordStrength?: boolean;
   }> = [
     {
       name: "name",
@@ -39,6 +40,7 @@ export default function Register() {
       label: "Password",
       type: "password",
       placeholder: "Enter your password",
+      showPasswordStrength: true,
     },
   ];
 
@@ -70,7 +72,6 @@ export default function Register() {
         footerText="Have an account?"
         footerLinkText="Login"
         footerLinkTo="/login"
-        showPasswordStrength={true}
       />
     </div>
   );

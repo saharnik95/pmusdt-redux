@@ -29,14 +29,15 @@ module.exports = {
         },
         form: {
           background: "#2A3342",
-          text: "#ABABAB",
           input: "#242C39",
           buttonBackground: "#1D8D94",
+          fail: "#F66066",
+          danger: "#F66066",
         },
         topBar: {
           text: "#596B89",
           input: "",
-          buttonBackground: "",
+          buttonBackground: "#",
         },
       },
     },

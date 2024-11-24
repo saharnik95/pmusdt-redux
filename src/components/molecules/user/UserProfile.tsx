@@ -70,7 +70,6 @@ export default function UserProfile() {
         footerText="Have an account?"
         footerLinkText="Login"
         footerLinkTo="/login"
-        showPasswordStrength={true}
       />
     </div>
   );

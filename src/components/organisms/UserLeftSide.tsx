@@ -71,12 +71,12 @@ export default function UserLeftSide({
             onClick={() => setCurrentPage(item.name)} // Pass the page name up to parent
           >
             <span
-              className={`text-form-text ${isSelected ? "text-white" : ""}`}
+              className={`text-footer-text ${isSelected ? "text-white" : ""}`}
             >
               <item.icon color={isSelected ? "white" : "#ABABAB"} />
             </span>
             <Typography
-              className={`text-form-text ${
+              className={`text-footer-text ${
                 isSelected ? "font-bold text-white" : ""
               }`}
               sx={{

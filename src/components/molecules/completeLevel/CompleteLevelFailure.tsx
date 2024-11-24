@@ -12,7 +12,7 @@ export default function CompleteLevelFailure({
         <span>
           <BigCrossIconComponent className="w-3 h-3 md:w-[40px] md:h-[40px]" />
         </span>
-        <Typography variant="SH" className="text-[#F66066]">
+        <Typography variant="SH" className="text-form-fail">
           Your Payment Time Has Expired !{" "}
         </Typography>
       </div>
@@ -39,7 +39,7 @@ export default function CompleteLevelFailure({
           marginTop: "30px",
           borderRadius: "10px",
           boxShadow: "0px 0px 20px 0px rgba(29, 141, 148, 0.5)",
-          backgroundColor: "#1D8D94",
+          backgroundColor: (theme) => theme.palette.form.buttonBackground,
         }}
         variant="contained"
         type="submit"

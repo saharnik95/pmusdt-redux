@@ -20,7 +20,10 @@ export default function FormFooter({
           component={Link}
           to={linkTo}
           variant="FI"
-          sx={{ color: "#1D8D94", textDecoration: "none" }}
+          sx={{
+            color: (theme) => theme.palette.form.buttonBackground,
+            textDecoration: "none",
+          }}
         >
           {linkText}
         </MuiLink>

@@ -44,7 +44,7 @@ export default function CompleteLevelDefault() {
             <Select
               value={selectedNetwork}
               onChange={handleNetworkChange}
-              className="sm:w-[126px] w-full bg-[#1D8D94] text-white rounded-t-[10px] sm:rounded-t-none sm:rounded-l-[10px]"
+              className="sm:w-[126px] w-full bg-form-buttonBackground text-white rounded-t-[10px] sm:rounded-t-none sm:rounded-l-[10px]"
               sx={{
                 color: "white",
                 fontWeight: 700,
@@ -74,7 +74,8 @@ export default function CompleteLevelDefault() {
               MenuProps={{
                 PaperProps: {
                   sx: {
-                    backgroundColor: "#1D8D94",
+                    backgroundColor: (theme) =>
+                      theme.palette.form.buttonBackground,
                     "& .MuiMenuItem-root": {
                       color: "white",
                     },
@@ -129,7 +130,7 @@ export default function CompleteLevelDefault() {
           <div key={step.id} className="flex items-start gap-3 mt-3">
             <Button
               sx={{
-                backgroundColor: "#1D8D94",
+                backgroundColor: (theme) => theme.palette.form.buttonBackground,
                 color: "white",
                 borderRadius: "50%",
                 minWidth: "26px",

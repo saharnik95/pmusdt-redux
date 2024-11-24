@@ -131,7 +131,7 @@ export default function CompleteLevelTimer({
       )}
       {/* Failure message when payment fails */}
       {status === "failed" && (
-        <div className="mt-2 text-[#F66066] font-bold text-[10px] sm:text-xs">
+        <div className="mt-2 text-form-fail font-bold text-[10px] sm:text-xs">
           Payment Failed!
         </div>
       )}

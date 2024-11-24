@@ -198,7 +198,7 @@ export default function ExchangeLevel({
             padding: "20px",
             borderRadius: "10px",
             boxShadow: "0px 0px 20px 0px rgba(29, 141, 148, 0.5)",
-            backgroundColor: "#1D8D94",
+            backgroundColor: (theme) => theme.palette.form.buttonBackground,
           }}
           fullWidth
           variant="contained"

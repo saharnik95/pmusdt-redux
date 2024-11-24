@@ -22,6 +22,7 @@ export default function Login() {
     label: string;
     type: string;
     placeholder: string;
+    showPasswordStrength?: boolean;
   }[] = [
     {
       name: "email",
@@ -34,6 +35,7 @@ export default function Login() {
       label: "Password",
       type: "password",
       placeholder: "Enter your password",
+      showPasswordStrength: false,
     },
   ];
 
@@ -82,7 +84,6 @@ export default function Login() {
         footerLinkTo="/register"
         showKeepLoggedIn={true}
         showForgotPassword={true}
-        showPasswordStrength={false}
       />
     </div>
   );

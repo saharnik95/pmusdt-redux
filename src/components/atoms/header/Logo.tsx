@@ -10,7 +10,7 @@ const Logo = () => {
       <img src={logo} alt="Logo" className="md:w-17 md:h-17 mr-2" />
       <Typography
         variant="LM"
-        className="text-primary-foreground font-russoone text-transparent bg-clip-text bg-gradient-to-r from-[#1D8D94] to-[#99D9A6] flex"
+        className="text-primary-foreground font-russoone text-transparent bg-clip-text bg-gradient-to-r from-form-buttonBackground to-[#99D9A6] flex"
       >
         PMUSDT.COM
       </Typography>
