@@ -62,13 +62,14 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex lg:my-[152px] items-center justify-center bg-primary-background">
+    <div className="flex lg:mb-[238px] lg:mt-[159px] md:my-16 my-8 items-center justify-center bg-primary-background">
       <Form
         title="Forgot Password"
         fields={fields}
         schema={forgotPasswordSchema}
         onSubmit={onSubmit}
         submitButtonText="Confirm"
+        showPasswordStrength={false}
       />
     </div>
   );

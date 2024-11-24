@@ -70,7 +70,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex lg:my-[152px] items-center justify-center  bg-primary-background">
+    <div className="flex lg:mb-[152px] lg:mt-[85px] md:my-16 my-8  items-center justify-center  bg-primary-background">
       <Form
         title="Login"
         fields={fields}
@@ -82,6 +82,7 @@ export default function Login() {
         footerLinkTo="/register"
         showKeepLoggedIn={true}
         showForgotPassword={true}
+        showPasswordStrength={false}
       />
     </div>
   );

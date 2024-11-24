@@ -3,6 +3,9 @@ import { Button, Checkbox, Divider, Typography } from "@mui/material";
 import ConfirmLevelrules from "../molecules/confirmLevel/ConfirmLevelrules";
 import ConfirmEmail from "../molecules/confirmLevel/ConfirmEmail";
 import { Check } from "lucide-react";
+import { useAuth } from "@/context/authContext";
+import { useNavigate } from "react-router-dom";
+import { authService } from "@/services/authService";
 
 interface ExchangeInfo {
   fromAmount: string;
@@ -13,19 +16,20 @@ interface ExchangeInfo {
 
 interface ConfirmLevelProps {
   onNext: () => void;
-  user: { name: string; email: string } | null;
   exchangeInfo: ExchangeInfo;
 }
 
 export default function ConfirmLevel({
   onNext,
-  user,
   exchangeInfo,
 }: ConfirmLevelProps) {
   const [agreed, setAgreed] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, login } = useAuth();
+  const navigate = useNavigate();
 
-  //using saved email if it exist
   useEffect(() => {
     const savedEmail = localStorage.getItem("userEmail");
     if (savedEmail) {
@@ -33,20 +37,33 @@ export default function ConfirmLevel({
     }
   }, []);
 
-  //Handle Confirm
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!agreed) {
-      alert("Please agree to the terms.");
+      setError("Please agree to the terms.");
       return;
     }
 
-    if (!user && !email) {
-      alert("Please enter your email address.");
-      return;
+    if (!isAuthenticated) {
+      try {
+        const user = await authService.login(email, password);
+        await login(user.name, user.email, password, true);
+        localStorage.setItem("userEmail", user.email);
+        onNext();
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.message === "EMAIL_NOT_FOUND") {
+            setError("Email doesn't exist. Please register.");
+            setTimeout(() => navigate("/register"), 3000);
+          } else if (error.message === "INVALID_PASSWORD") {
+            setError("Incorrect password. Please try again.");
+          } else {
+            setError("An unexpected error occurred. Please try again.");
+          }
+        }
+      }
+    } else {
+      onNext();
     }
-
-    localStorage.setItem("userEmail", email);
-    onNext();
   };
 
   const getCurrencyImage = (currency: string) => {
@@ -60,17 +77,11 @@ export default function ConfirmLevel({
     }
   };
 
-  const handleEmailChange = (newEmail: string) => {
-    setEmail(newEmail);
-  };
-
   return (
     <div className="w-full flex-col justify-between bg-form-background md:rounded-[30px] rounded-[10px] lg:gap-36 lg:py-12 md:gap-8 gap-4 md:px-20 md:py-6 px-4 py-6 max-w-[1140px] lg:mx-auto">
-      {/*Header*/}
       <Typography variant="FH" className="text-white">
         Invoice Details :
       </Typography>
-      {/*Send*/}
 
       <div className="flex flex-row justify-between items-center lg:mt-[43px] md:mt-[33px] mt-[23px]">
         <Typography variant="FT" className="text-footer-text">
@@ -90,8 +101,6 @@ export default function ConfirmLevel({
           </Typography>
         </div>
       </div>
-
-      {/*Recieve*/}
 
       <div className="flex flex-row justify-between items-center lg:mt-4 mt-2">
         <Typography variant="FT" className="text-footer-text">
@@ -117,17 +126,15 @@ export default function ConfirmLevel({
         sx={{ width: "100%", backgroundColor: "#596B89", mx: 1, mt: "34px" }}
       />
 
-      {/*showing Email if its not authenticated*/}
-
-      {!user && (
-        <ConfirmEmail onEmailChange={handleEmailChange} initialEmail={email} />
+      {!isAuthenticated && (
+        <ConfirmEmail
+          onEmailChange={setEmail}
+          onPasswordChange={setPassword}
+          initialEmail={email}
+        />
       )}
 
-      {/*ConfirmLevelrules*/}
-
       <ConfirmLevelrules />
-
-      {/*Checkbox*/}
 
       <div className="flex flex-row mt-8">
         <div className="flex items-center">
@@ -157,7 +164,12 @@ export default function ConfirmLevel({
         </div>
       </div>
 
-      {/*Submit Button*/}
+      {error && (
+        <Typography className="text-red-500 mt-4" variant="FI">
+          {error}
+        </Typography>
+      )}
+
       <div className="w-full flex justify-center">
         <Button
           onClick={handleConfirm}

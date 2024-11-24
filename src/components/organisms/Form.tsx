@@ -34,6 +34,7 @@ interface FormProps<T extends z.ZodType<any, any>> {
   footerLinkTo?: string;
   showKeepLoggedIn?: boolean;
   showForgotPassword?: boolean;
+  showPasswordStrength?: boolean;
 }
 
 export default function Form<T extends z.ZodType<any, any>>({
@@ -47,6 +48,7 @@ export default function Form<T extends z.ZodType<any, any>>({
   footerLinkTo,
   showKeepLoggedIn = false,
   showForgotPassword = false,
+  showPasswordStrength = true,
 }: FormProps<T>) {
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -154,22 +156,24 @@ export default function Form<T extends z.ZodType<any, any>>({
                   helperText={errors[field.name]?.message as string}
                   placeholder={field.placeholder}
                 />
-                {field.type === "password" && passwordStrength && (
-                  <span className="">
-                    <Typography
-                      variant="FI"
-                      className={`absolute right-0 bottom-[-30px] ${
-                        passwordStrength === "Strong"
-                          ? "text-[#6EC207]"
-                          : passwordStrength === "Medium"
-                          ? "text-[#FF6600]"
-                          : "text-[#F66066]"
-                      }`}
-                    >
-                      {passwordStrength}
-                    </Typography>
-                  </span>
-                )}
+                {field.type === "password" &&
+                  passwordStrength &&
+                  showPasswordStrength && (
+                    <span className="">
+                      <Typography
+                        variant="FI"
+                        className={`absolute right-0 bottom-[-30px] ${
+                          passwordStrength === "Strong"
+                            ? "text-[#6EC207]"
+                            : passwordStrength === "Medium"
+                            ? "text-[#FF6600]"
+                            : "text-[#F66066]"
+                        }`}
+                      >
+                        {passwordStrength}
+                      </Typography>
+                    </span>
+                  )}
               </div>
             )}
           />

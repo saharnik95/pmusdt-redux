@@ -4,9 +4,16 @@ import LoginAndRegister from "../molecules/header/LoginAndRegister";
 import { useAuth } from "@/context/authContext";
 import { Typography } from "@mui/material";
 import PersonIconComponent from "../icons/PersonIconComponent";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export default function Header() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  // Handle navigation to /user page
+  const handleProfileClick = () => {
+    navigate("/user"); // Navigate to /user page
+  };
 
   return (
     <div className="w-full flex justify-between items-center lg:gap-36 lg:py-18 md:gap-2 gap-2 md:px-8 md:py-16 px-4 py-12 max-w-[1140px] xl:px-0 xl:mx-auto">
@@ -17,9 +24,10 @@ export default function Header() {
       <div className="md:order-2 order-3 ">
         <MainMenu />
       </div>
+
       {user ? (
-        <div className="flex items-center md:gap-4  gap-2 order-2 md:order-">
-          <span onClick={logout} className="cursor-pointer">
+        <div className="flex items-center md:gap-4 gap-2 order-2 md:order-">
+          <span onClick={handleProfileClick} className="cursor-pointer ">
             <PersonIconComponent />
           </span>
           <Typography

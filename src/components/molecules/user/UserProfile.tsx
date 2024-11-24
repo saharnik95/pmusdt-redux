@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import Form from "../components/organisms/Form";
-import { authService } from "../services/authService";
+import Form from "@/components/organisms/Form";
+import { authService } from "@/services/authService";
 import { useAuth } from "@/context/authContext";
 
 const registerSchema = z.object({
@@ -12,7 +12,7 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-export default function Register() {
+export default function UserProfile() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -60,7 +60,7 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center lg:mb-[114px] lg:mt-[85px]  md:my-16 my-8 ">
+    <div className="flex items-center justify-center my-[150px]">
       <Form
         title="Register"
         fields={fields}

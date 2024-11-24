@@ -1,22 +1,17 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation, Location } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
-import Form from "../components/organisms/Form";
-import { authService } from "../services/authService";
+import Form from "@/components/organisms/Form";
 import { useAuth } from "@/context/authContext";
+import { authService } from "@/services/authService";
 
 // Defining changePasswordSchema
-const changePasswordSchema = z
-  .object({
-    password: z.string().min(6, "New password must be at least 6 characters"),
-    confirmPassword: z
-      .string()
-      .min(6, "Confirm password must be at least 6 characters"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const changePasswordSchema = z.object({
+  password: z.string().min(6, "New password must be at least 6 characters"),
+  confirmPassword: z
+    .string()
+    .min(6, "Confirm password must be at least 6 characters"),
+});
 
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
@@ -26,24 +21,22 @@ interface LocationState {
 
 export default function ChangePassword() {
   const navigate = useNavigate();
-  const location = useLocation() as Location & { state: LocationState };
+  const location = useLocation();
   const { logout } = useAuth();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
 
-  // Getting Email From Last Page and Checking if it exists
   useEffect(() => {
-    if (location.state && location.state.email) {
-      setEmail(location.state.email);
+    const state = location.state as LocationState;
+    if (state && state.email) {
+      setEmail(state.email);
     } else {
       const message =
         "Email not provided. Please start from the forgot password page.";
-      setErrorMessage(message);
       alert(message);
+      navigate("/forgot-password");
     }
-  }, [location]);
+  }, [location, navigate]);
 
-  // Defining Formfields
   const fields: {
     name: keyof ChangePasswordFormData;
     label: string;
@@ -64,51 +57,51 @@ export default function ChangePassword() {
     },
   ];
 
-  // Handling submit
   const onSubmit = async (data: ChangePasswordFormData): Promise<void> => {
     try {
       if (!email) {
-        const message =
-          "Email not provided. Please start from the forgot password page.";
-        setErrorMessage(message);
-        alert(message);
-        throw new Error(message);
+        throw new Error(
+          "Email not provided. Please start from the forgot password page."
+        );
+      }
+
+      // Check if passwords match
+      if (data.password !== data.confirmPassword) {
+        throw { confirmPassword: "Passwords do not match" };
       }
 
       const response = await authService.changePassword(email, data.password);
       console.log("Password change response:", response);
 
-      // Alert user
       alert(
         "Password successfully changed. Please log in with your new password."
       );
-
-      // Logout user
       logout();
-
-      // Navigate to login page
       navigate("/login");
     } catch (error: unknown) {
       console.error("Error occurred:", error);
-      let errorMsg = "An error occurred while changing the password.";
       if (error instanceof Error) {
-        errorMsg = error.message;
+        throw { form: error.message };
+      } else if (typeof error === "object" && error !== null) {
+        throw error;
+      } else {
+        throw {
+          form: "An unexpected error occurred while changing the password.",
+        };
       }
-      setErrorMessage(errorMsg);
-      alert(errorMsg);
     }
   };
 
   return (
-    <div className="flex lg:my-[152px] items-center justify-center bg-primary-background">
+    <div className="flex lg:mt-[204px] lg:mb-[89px]  md:my-16 my-8  items-center justify-center bg-primary-background">
       <Form
         title="Change Password"
         fields={fields}
         schema={changePasswordSchema}
         onSubmit={onSubmit}
         submitButtonText="Change Password"
+        showPasswordStrength={true}
       />
-      {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
     </div>
   );
 }
