@@ -22,6 +22,7 @@ interface ExchangeLevelDivProps {
   currency: CurrencyOption;
   error?: string;
   onCurrencyChange: (event: SelectChangeEvent<string>) => void;
+  currencyOptions: Record<string, CurrencyOption>;
 }
 
 export default function ExchangeLevelDiv({
@@ -32,13 +33,16 @@ export default function ExchangeLevelDiv({
   currency,
   error,
   onCurrencyChange,
+  currencyOptions,
 }: ExchangeLevelDivProps) {
   return (
     <div className="bg-form-background md:rounded-[30px] rounded-[10px] lg:w-[560px] md:w-[480px] lg:px-9 lg:py-10 md:px-6 md:py-7 px-4 py-5">
+      {/* Label for the input */}
       <Typography variant="body1" className="text-footer-text">
         {label} :
       </Typography>
       <div className="w-full flex justify-center bg-primary-background rounded-[10px] px-4 py-2 gap-2 lg:mt-5 md:mt-4 mt-2">
+        {/* Input field for amount */}
         <Input
           placeholder="1000"
           disableUnderline
@@ -66,6 +70,7 @@ export default function ExchangeLevelDiv({
             },
           }}
         />
+        {/* Vertical divider */}
         <Divider
           orientation="vertical"
           sx={{
@@ -74,6 +79,7 @@ export default function ExchangeLevelDiv({
             backgroundColor: "#596B89",
           }}
         />
+        {/* Currency select dropdown */}
         <Select
           value={currency.value}
           onChange={onCurrencyChange}
@@ -90,24 +96,28 @@ export default function ExchangeLevelDiv({
             },
             width: "100%",
             "& .MuiSelect-icon": {
-              display: "none", // Updated icon display
+              display: "none",
             },
           }}
         >
-          <MenuItem value={currency.value}>
-            <div className="flex w-full items-center gap-2">
-              <img
-                src={currency.icon}
-                className="w-6 h-6 rounded-full"
-                alt={currency.label}
-              />
-              <Typography variant="body2" className="text-[#979E9C]">
-                {currency.label}
-              </Typography>
-            </div>
-          </MenuItem>
+          {/* Render menu items for each currency option */}
+          {Object.values(currencyOptions).map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              <div className="flex w-full items-center gap-2">
+                <img
+                  src={option.icon}
+                  className="w-6 h-6 rounded-full"
+                  alt={option.label}
+                />
+                <Typography variant="body2" className="text-[#979E9C]">
+                  {option.label}
+                </Typography>
+              </div>
+            </MenuItem>
+          ))}
         </Select>
       </div>
+      {/* Display min and max amounts */}
       <div className="flex gap-4 mt-4">
         <Typography className="text-footer-text" variant="body2">
           Min : $100{" "}
@@ -117,6 +127,7 @@ export default function ExchangeLevelDiv({
           Max: $4832{" "}
         </Typography>
       </div>
+      {/* Display error message if any */}
       {error && (
         <Typography className="text-red-500 mt-2" variant="body2">
           {error}

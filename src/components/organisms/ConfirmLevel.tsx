@@ -33,6 +33,7 @@ export default function ConfirmLevel({
   const [agreed, setAgreed] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [generalError, setGeneralError] = useState<string | null>(null);
@@ -45,7 +46,11 @@ export default function ConfirmLevel({
     if (savedEmail) {
       setEmail(savedEmail);
     }
-  }, []);
+
+    // Reset agreed state when component mounts or authentication status changes
+    setAgreed(false);
+    setKeepLoggedIn(false);
+  }, [isAuthenticated]);
 
   const handleConfirm = async () => {
     // Reset all error states
@@ -59,35 +64,36 @@ export default function ConfirmLevel({
       return;
     }
 
+    if (isAuthenticated) {
+      // If already authenticated, proceed to next step
+      onNext();
+      return;
+    }
+
     try {
       // Validate email and password using Zod schema
       validationSchema.parse({ email, password });
 
-      if (!isAuthenticated) {
-        try {
-          // Attempt to log in
-          const user = await authService.login(email, password);
-          await login(user.name, user.email, password, true);
+      try {
+        // Attempt to log in
+        const user = await authService.login(email, password);
+        await login(user.name, user.email, password, keepLoggedIn);
+        if (keepLoggedIn) {
           localStorage.setItem("userEmail", user.email);
-          onNext();
-        } catch (error) {
-          // Handle login errors
-          if (error instanceof Error) {
-            if (error.message === "EMAIL_NOT_FOUND") {
-              setEmailError("Email doesn't exist. Please register.");
-              setTimeout(() => navigate("/register"), 3000);
-            } else if (error.message === "INVALID_PASSWORD") {
-              setPasswordError("Incorrect password. Please try again.");
-            } else {
-              setGeneralError(
-                "An unexpected error occurred. Please try again."
-              );
-            }
+        }
+        onNext();
+      } catch (error) {
+        // Handle login errors
+        if (error instanceof Error) {
+          if (error.message === "EMAIL_NOT_FOUND") {
+            setEmailError("Email doesn't exist. Please register.");
+            setTimeout(() => navigate("/register"), 3000);
+          } else if (error.message === "INVALID_PASSWORD") {
+            setPasswordError("Incorrect password. Please try again.");
+          } else {
+            setGeneralError("An unexpected error occurred. Please try again.");
           }
         }
-      } else {
-        // If already authenticated, proceed to next step
-        onNext();
       }
     } catch (error) {
       // Handle Zod validation errors
@@ -166,14 +172,41 @@ export default function ConfirmLevel({
 
       {/* Render ConfirmEmail component if user is not authenticated */}
       {!isAuthenticated && (
-        <ConfirmEmail
-          email={email}
-          password={password}
-          onEmailChange={setEmail}
-          onPasswordChange={setPassword}
-          emailError={emailError || undefined}
-          passwordError={passwordError || undefined}
-        />
+        <>
+          <ConfirmEmail
+            email={email}
+            password={password}
+            onEmailChange={setEmail}
+            onPasswordChange={setPassword}
+            emailError={emailError || undefined}
+            passwordError={passwordError || undefined}
+          />
+          {/* Keep me logged in checkbox */}
+          <div className="flex items-center mt-4">
+            <Checkbox
+              checked={keepLoggedIn}
+              onChange={(e) => setKeepLoggedIn(e.target.checked)}
+              icon={<span className="w-6 h-6 rounded-lg bg-[#242C39]" />}
+              checkedIcon={
+                <span className="w-6 h-6 rounded-lg bg-form-buttonBackground flex items-center justify-center">
+                  <Check className="w-4 h-4 text-white stroke-[3]" />
+                </span>
+              }
+              sx={{
+                marginRight: "9px",
+                width: "24px",
+                height: "24px",
+                padding: 0,
+                "&:hover": {
+                  backgroundColor: "transparent",
+                },
+              }}
+            />
+            <Typography variant="FR" className="text-white">
+              Keep me logged in
+            </Typography>
+          </div>
+        </>
       )}
 
       <ConfirmLevelRules />
@@ -218,12 +251,18 @@ export default function ConfirmLevel({
       <div className="w-full flex justify-center">
         <Button
           onClick={handleConfirm}
+          disabled={!agreed}
           sx={{
             marginTop: "42px",
             padding: "20px",
             borderRadius: "10px",
             boxShadow: "0px 0px 20px 0px rgba(29, 141, 148, 0.5)",
             backgroundColor: (theme) => theme.palette.form.buttonBackground,
+            "&:disabled": {
+              backgroundColor: (theme) =>
+                theme.palette.action.disabledBackground,
+              color: (theme) => theme.palette.action.disabled,
+            },
           }}
           variant="contained"
           className="w-[560px] align-middle"

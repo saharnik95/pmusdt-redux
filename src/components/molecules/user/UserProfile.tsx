@@ -3,6 +3,7 @@ import { z } from "zod";
 import Form from "@/components/organisms/Form";
 import { authService } from "@/services/authService";
 import { useAuth } from "@/context/authContext";
+import { Typography } from "@mui/material";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -24,19 +25,19 @@ export default function UserProfile() {
   }> = [
     {
       name: "name",
-      label: "Name",
+      label: "Name:",
       type: "text",
       placeholder: "Enter your name",
     },
     {
       name: "email",
-      label: "Email",
+      label: "Email:",
       type: "email",
       placeholder: "Enter your email",
     },
     {
       name: "password",
-      label: "Password",
+      label: "Password:",
       type: "password",
       placeholder: "Enter your password",
     },
@@ -49,7 +50,7 @@ export default function UserProfile() {
         data.email,
         data.password
       );
-      login(user.name, user.email, user.password, false); // Added 'false' for keepLoggedIn
+      login(user.name, user.email, user.password, false);
       navigate("/");
     } catch (error) {
       const errorMsg =
@@ -60,16 +61,19 @@ export default function UserProfile() {
   };
 
   return (
-    <div className="flex items-center justify-center my-[150px]">
+    <div className="flex flex-col   bg-form-background lg:pt-[38px] lg:pb-[45px] lg:w-[850px]  lg:px-[181px]  rounded-[20px]">
+      <Typography
+        className="text-white flex justify-start w-full text-start"
+        variant="FH"
+      >
+        Edit profile
+      </Typography>
       <Form
-        title="Register"
+        title=""
         fields={fields}
         schema={registerSchema}
         onSubmit={onSubmit}
-        submitButtonText="Register"
-        footerText="Have an account?"
-        footerLinkText="Login"
-        footerLinkTo="/login"
+        submitButtonText="confirm"
       />
     </div>
   );

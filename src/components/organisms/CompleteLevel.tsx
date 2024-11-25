@@ -15,20 +15,22 @@ interface ExchangeInfo {
 
 interface CompleteLevelProps {
   exchangeInfo: ExchangeInfo;
+  onReset: () => void; // New prop to handle resetting the level
 }
 
-export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
+export default function CompleteLevel({
+  exchangeInfo,
+  onReset,
+}: CompleteLevelProps) {
   const [timerStatus, setTimerStatus] = useState<
     "running" | "success" | "failed"
   >("running");
   const [restartTimer, setRestartTimer] = useState(false);
-  //Restarting Timer when exchange Info Changes
+
   useEffect(() => {
     setTimerStatus("running");
     setRestartTimer(true);
   }, [exchangeInfo]);
-
-  //Restarting Timer when restartTimer Changes
 
   useEffect(() => {
     if (restartTimer) {
@@ -36,10 +38,12 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
     }
   }, [restartTimer]);
 
-  //Hnadling Timer
   const handleTimerComplete = (status: "success" | "failed") => {
     console.log(`Timer completed with status: ${status}`);
     setTimerStatus(status);
+    if (status === "failed") {
+      handleReset();
+    }
   };
 
   const handleRestart = () => {
@@ -49,13 +53,25 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
 
   const handleMarkSuccess = () => {
     setTimerStatus("success");
+    handleReset();
   };
 
   const handleMarkFailed = () => {
     setTimerStatus("failed");
+    handleReset();
   };
 
-  //Getting Images
+  const handleReset = () => {
+    // Clear localStorage
+    localStorage.removeItem("currentLevel");
+    localStorage.removeItem("exchangeInfo");
+
+    // Reset the level and exchange info in the parent component
+    setTimeout(() => {
+      onReset();
+    }, 3000); // Delay the reset to allow the user to see the success/failure message
+  };
+
   const getCurrencyImage = (currency: string) => {
     switch (currency) {
       case "USDT(TRC20)":
@@ -84,8 +100,6 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
       </div>
 
       <div className="flex flex-row justify-between items-center lg:mt-[54px]">
-        {/*Send*/}
-
         <Typography variant="FT" className="text-footer-text">
           Send :{" "}
         </Typography>
@@ -104,8 +118,6 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
         </div>
       </div>
       <div className="flex flex-row justify-between items-center lg:mt-4">
-        {/*Recieve*/}
-
         <Typography variant="FT" className="text-footer-text">
           Receive :{" "}
         </Typography>
@@ -128,8 +140,6 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
         sx={{ width: "100%", backgroundColor: "#596B89", mx: 1, mt: "34px" }}
       />
 
-      {/*Rendering bottom Part Based of t or p and success and failed*/}
-
       {timerStatus === "running" &&
         (exchangeInfo.fromCurrency === "Perfect Money" ? (
           <CompleteLevelPtoT exchangeInfo={exchangeInfo} />
@@ -140,8 +150,6 @@ export default function CompleteLevel({ exchangeInfo }: CompleteLevelProps) {
       {timerStatus === "failed" && (
         <CompleteLevelFailure onRestart={handleRestart} />
       )}
-
-      {/*Buttons to setting success and failure*/}
 
       {timerStatus === "running" && (
         <div className="flex justify-center gap-4 mt-6">

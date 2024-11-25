@@ -6,7 +6,9 @@ import {
   Typography,
 } from "@mui/material";
 import ExchangeLevelDiv from "@/components/molecules/exchangeLevel/ExchangeLevelDiv";
+import { useDebounce } from "@/hook/useDebounce";
 
+// Define the structure for exchange information
 interface ExchangeInfo {
   fromAmount: string;
   fromCurrency: string;
@@ -14,14 +16,17 @@ interface ExchangeInfo {
   toCurrency: string;
 }
 
+// Define the props for the ExchangeLevel component
 interface ExchangeLevelProps {
   onNext: (info: ExchangeInfo) => void;
   initialExchangeInfo: ExchangeInfo;
 }
 
+// Define constants for minimum and maximum amounts
 const MIN_AMOUNT = 100;
 const MAX_AMOUNT = 4832;
 
+// Define currency options
 const currencyOptions = {
   "USDT(TRC20)": {
     value: "USDT(TRC20)",
@@ -39,6 +44,7 @@ export default function ExchangeLevel({
   onNext,
   initialExchangeInfo,
 }: ExchangeLevelProps) {
+  // State variables for form values and UI states
   const [fromValue, setFromValue] = useState(
     initialExchangeInfo.fromAmount || ""
   );
@@ -52,7 +58,10 @@ export default function ExchangeLevel({
   const [fromError, setFromError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  //setting prev data if exists
+  // Use debounce hook to delay updates to fromValue
+  const debouncedFromValue = useDebounce(fromValue, 300);
+
+  // Load saved state from localStorage on component mount
   useEffect(() => {
     const savedState = localStorage.getItem("exchangeState");
     if (savedState) {
@@ -68,6 +77,7 @@ export default function ExchangeLevel({
     }
   }, []);
 
+  // Save state to localStorage whenever it changes
   useEffect(() => {
     const state = {
       fromAmount: fromValue,
@@ -78,7 +88,17 @@ export default function ExchangeLevel({
     localStorage.setItem("exchangeState", JSON.stringify(state));
   }, [fromValue, toValue, fromCurrency, toCurrency]);
 
-  //validating for input numbers
+  // Calculate and update toValue whenever debouncedFromValue changes
+  useEffect(() => {
+    if (validateAmount(debouncedFromValue)) {
+      const amount = parseFloat(debouncedFromValue);
+      const exchangeRate = 1; // Replace with actual exchange rate logic
+      const calculatedToValue = (amount * exchangeRate).toFixed(2);
+      setToValue(calculatedToValue);
+    }
+  }, [debouncedFromValue]);
+
+  // Validate the input amount
   const validateAmount = (value: string) => {
     if (!value || value.trim() === "") {
       setFromError("Please enter an amount");
@@ -101,7 +121,7 @@ export default function ExchangeLevel({
     return true;
   };
 
-  //still loading while its not validated
+  // Handle the exchange button click
   const handleExchange = () => {
     if (!validateAmount(fromValue)) {
       return;
@@ -109,26 +129,20 @@ export default function ExchangeLevel({
 
     setIsLoading(true);
 
-    //calculating to value
-    const amount = parseFloat(fromValue);
-    const exchangeRate = 1;
-    const calculatedToValue = (amount * exchangeRate).toFixed(2);
-    setToValue(calculatedToValue);
-
     const exchangeInfo: ExchangeInfo = {
       fromAmount: fromValue,
       fromCurrency,
-      toAmount: calculatedToValue,
+      toAmount: toValue,
       toCurrency,
     };
 
     setTimeout(() => {
       setIsLoading(false);
       onNext(exchangeInfo);
-    }, 5000);
+    }, 1000);
   };
 
-  //swapping
+  // Handle swapping currencies and values
   const handleSwap = () => {
     setFromValue(toValue);
     setToValue(fromValue);
@@ -137,24 +151,36 @@ export default function ExchangeLevel({
     setFromError("");
   };
 
+  // Handle changes to the 'from' input value
   const handleFromValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFromValue(value);
     validateAmount(value);
   };
 
+  // Handle changes to the 'from' currency
   const handleFromCurrencyChange = (event: SelectChangeEvent<string>) => {
-    setFromCurrency(event.target.value as keyof typeof currencyOptions);
+    const newFromCurrency = event.target.value as keyof typeof currencyOptions;
+    setFromCurrency(newFromCurrency);
+    // Automatically change the 'to' currency to the other option
+    setToCurrency(
+      newFromCurrency === "USDT(TRC20)" ? "Perfect Money" : "USDT(TRC20)"
+    );
   };
 
+  // Handle changes to the 'to' currency
   const handleToCurrencyChange = (event: SelectChangeEvent<string>) => {
-    setToCurrency(event.target.value as keyof typeof currencyOptions);
+    const newToCurrency = event.target.value as keyof typeof currencyOptions;
+    setToCurrency(newToCurrency);
+    // Automatically change the 'from' currency to the other option
+    setFromCurrency(
+      newToCurrency === "USDT(TRC20)" ? "Perfect Money" : "USDT(TRC20)"
+    );
   };
 
   return (
     <div className="relative flex flex-col w-full items-center">
-      {/*Top Exchange Div*/}
-
+      {/* From currency input */}
       <ExchangeLevelDiv
         label="From"
         value={fromValue}
@@ -163,10 +189,10 @@ export default function ExchangeLevel({
         currency={currencyOptions[fromCurrency as keyof typeof currencyOptions]}
         error={fromError}
         onCurrencyChange={handleFromCurrencyChange}
+        currencyOptions={currencyOptions}
       />
 
-      {/*Swapping flash */}
-
+      {/* Swap button */}
       <div className="relative" style={{ height: "27px" }}>
         <div
           className="absolute top-1/2 left-1/2 w-[69px] h-[69px] rounded-full bg-primary-background flex justify-center items-center z-10 cursor-pointer"
@@ -179,8 +205,7 @@ export default function ExchangeLevel({
         </div>
       </div>
 
-      {/*Bottom Exchange Div*/}
-
+      {/* To currency input */}
       <ExchangeLevelDiv
         label="To"
         value={toValue}
@@ -188,9 +213,10 @@ export default function ExchangeLevel({
         readOnly={true}
         currency={currencyOptions[toCurrency as keyof typeof currencyOptions]}
         onCurrencyChange={handleToCurrencyChange}
+        currencyOptions={currencyOptions}
       />
 
-      {/*Submit Button*/}
+      {/* Exchange button */}
       <div className="flex lg:w-[560px] md:w-[480px] justify-center">
         <Button
           sx={{
