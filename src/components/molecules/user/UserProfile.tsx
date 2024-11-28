@@ -1,79 +1,98 @@
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
 import Form from "@/components/organisms/Form";
-import { authService } from "@/services/authService";
-import { useAuth } from "@/context/authContext";
+import { updateUserProfile } from "@/store/authSlice";
+import { AppDispatch, RootState } from "@/store/store";
 import { Typography } from "@mui/material";
 
-const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+//defining schema
+const editProfileSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").optional(),
+  email: z.string().email("Invalid email address").optional(),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .optional(),
 });
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+//infering schemas type
+
+type EditProfileFormData = z.infer<typeof editProfileSchema>;
 
 export default function UserProfile() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  //reading authentication status from store
+  const user = useSelector((state: RootState) => state.auth.user);
 
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
+
+  //defining formfields
   const fields: Array<{
-    name: keyof RegisterFormData;
+    name: keyof EditProfileFormData;
     label: string;
     type: string;
     placeholder: string;
+    showPasswordStrength?: boolean;
   }> = [
     {
       name: "name",
-      label: "Name:",
+      label: "Name",
       type: "text",
-      placeholder: "Enter your name",
+      placeholder: "Enter new name",
     },
     {
       name: "email",
-      label: "Email:",
+      label: "Email",
       type: "email",
-      placeholder: "Enter your email",
+      placeholder: "Enter new email",
     },
     {
       name: "password",
-      label: "Password:",
+      label: "Password",
       type: "password",
-      placeholder: "Enter your password",
+      placeholder: "Enter new password",
+      showPasswordStrength: true,
     },
   ];
 
-  const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (data: EditProfileFormData) => {
     try {
-      const user = await authService.register(
-        data.name,
-        data.email,
-        data.password
+      const resultAction = await dispatch(
+        //sending action to  update user
+
+        updateUserProfile({ id: user.id, ...data }) //spreding name email and pass
       );
-      login(user.name, user.email, user.password, false);
-      navigate("/");
+      if (updateUserProfile.fulfilled.match(resultAction)) {
+        navigate("/login");
+      } else if (updateUserProfile.rejected.match(resultAction)) {
+        throw new Error(resultAction.payload as string);
+      }
     } catch (error) {
       const errorMsg =
-        error || "An error occurred while changing the password.";
+        error instanceof Error
+          ? error.message
+          : "An error occurred while updating your profile.";
       alert(errorMsg);
-      console.error("Registration failed:", error);
+      console.error("Profile update failed:", error);
     }
   };
 
   return (
-    <div className="flex flex-col   bg-form-background lg:pt-[38px] lg:pb-[45px] lg:w-[850px]  lg:px-[181px]  rounded-[20px]">
-      <Typography
-        className="text-white flex justify-start w-full text-start"
-        variant="FH"
-      >
+    <div className="flex flex-col w-full bg-form-background lg:pt-[38px] lg:pb-[61px]   xl:px-[160px] lg:px-[60px] md:px-[0px] md:pt-[28px] md:pb-[51px] pt-[18px] pb-[41px]  rounded-[20px]">
+      <Typography variant="FH" className="text-white pl-6">
         Edit profile
       </Typography>
       <Form
         title=""
         fields={fields}
-        schema={registerSchema}
+        schema={editProfileSchema}
         onSubmit={onSubmit}
-        submitButtonText="confirm"
+        submitButtonText="Confirm"
       />
     </div>
   );

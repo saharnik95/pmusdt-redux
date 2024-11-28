@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { z } from "zod";
 import Form from "@/components/organisms/Form";
-import { useAuth } from "@/context/authContext";
-import { authService } from "@/services/authService";
+import { changePassword, logout } from "@/store/authSlice";
+import { AppDispatch } from "@/store/store";
 
 // Defining changePasswordSchema
 const changePasswordSchema = z.object({
@@ -12,9 +13,11 @@ const changePasswordSchema = z.object({
     .string()
     .min(6, "Confirm password must be at least 6 characters"),
 });
+//infering schemas type
 
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
+//defining interface for location status
 interface LocationState {
   email?: string;
 }
@@ -22,11 +25,11 @@ interface LocationState {
 export default function ChangePassword() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const state = location.state as LocationState;
+    const state = location.state as LocationState; //rading state from location that sent
     if (state && state.email) {
       setEmail(state.email);
     } else {
@@ -36,7 +39,7 @@ export default function ChangePassword() {
       navigate("/forgot-password");
     }
   }, [location, navigate]);
-
+  //defining form fields
   const fields: {
     name: keyof ChangePasswordFormData;
     label: string;
@@ -70,23 +73,27 @@ export default function ChangePassword() {
 
       // Check if passwords match
       if (data.password !== data.confirmPassword) {
-        throw { confirmPassword: "Passwords do not match" };
+        throw new Error("Passwords do not match");
       }
 
-      const response = await authService.changePassword(email, data.password);
-      console.log("Password change response:", response);
+      const resultAction = await dispatch(
+        //sending action to change password
 
-      alert(
-        "Password successfully changed. Please log in with your new password."
+        changePassword({ email, newPassword: data.password })
       );
-      logout();
-      navigate("/login");
-    } catch (error: unknown) {
+      if (changePassword.fulfilled.match(resultAction)) {
+        alert(
+          "Password successfully changed. Please log in with your new password."
+        );
+        dispatch(logout());
+        navigate("/login");
+      } else if (changePassword.rejected.match(resultAction)) {
+        throw new Error(resultAction.payload as string);
+      }
+    } catch (error) {
       console.error("Error occurred:", error);
       if (error instanceof Error) {
         throw { form: error.message };
-      } else if (typeof error === "object" && error !== null) {
-        throw error;
       } else {
         throw {
           form: "An unexpected error occurred while changing the password.",
@@ -96,7 +103,7 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="flex lg:mt-[204px] lg:mb-[89px]  md:my-16 my-8  items-center justify-center bg-primary-background">
+    <div className="flex lg:mt-[204px] lg:mb-[89px] md:my-16 my-8 items-center justify-center bg-primary-background">
       <Form
         title="Change Password"
         fields={fields}

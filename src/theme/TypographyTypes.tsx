@@ -17,6 +17,9 @@ declare module "@mui/material/styles" {
     FR: React.CSSProperties;
     SH: React.CSSProperties;
     SB: React.CSSProperties;
+    PH: React.CSSProperties;
+    UH: React.CSSProperties;
+    QB: React.CSSProperties;
   }
 
   interface TypographyVariantsOptions {
@@ -34,6 +37,9 @@ declare module "@mui/material/styles" {
     FR?: React.CSSProperties;
     SH?: React.CSSProperties;
     SB?: React.CSSProperties;
+    PH: React.CSSProperties;
+    UH: React.CSSProperties;
+    QB: React.CSSProperties;
   }
 }
 
@@ -53,5 +59,8 @@ declare module "@mui/material/Typography" {
     FR: true;
     SH: true;
     SB: true;
+    PH: true;
+    UH: true;
+    QB: true;
   }
 }

@@ -1,35 +1,31 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Button, Checkbox, Divider, Typography } from "@mui/material";
 import ConfirmEmail from "../molecules/confirmLevel/ConfirmEmail";
 import { Check } from "lucide-react";
-import { useAuth } from "@/context/authContext";
 import { useNavigate } from "react-router-dom";
-import { authService } from "@/services/authService";
 import { z } from "zod";
 import ConfirmLevelRules from "@/components/molecules/confirmLevel/ConfirmLevelRules";
-
-interface ExchangeInfo {
-  fromAmount: string;
-  fromCurrency: string;
-  toAmount: string;
-  toCurrency: string;
-}
+import { RootState, AppDispatch } from "@/store/store";
+import { loginUser } from "@/store/authSlice";
 
 interface ConfirmLevelProps {
   onNext: () => void;
-  exchangeInfo: ExchangeInfo;
 }
 
-// Define Zod schema for email and password validation
 const validationSchema = z.object({
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-export default function ConfirmLevel({
-  onNext,
-  exchangeInfo,
-}: ConfirmLevelProps) {
+export default function ConfirmLevel({ onNext }: ConfirmLevelProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { isAuthenticated, error: authError } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const { exchangeInfo } = useSelector((state: RootState) => state.exchange);
+
   const [agreed, setAgreed] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,66 +33,49 @@ export default function ConfirmLevel({
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [generalError, setGeneralError] = useState<string | null>(null);
-  const { isAuthenticated, login } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Load saved email from localStorage on component mount
-    const savedEmail = localStorage.getItem("userEmail");
-    if (savedEmail) {
-      setEmail(savedEmail);
-    }
-
-    // Reset agreed state when component mounts or authentication status changes
     setAgreed(false);
     setKeepLoggedIn(false);
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    if (authError) {
+      if (authError === "EMAIL_NOT_FOUND") {
+        setEmailError("Email doesn't exist. Please register.");
+        setTimeout(() => navigate("/register"), 3000);
+      } else if (authError === "INVALID_PASSWORD") {
+        setPasswordError("Incorrect password. Please try again.");
+      } else {
+        setGeneralError("An unexpected error occurred. Please try again.");
+      }
+    }
+  }, [authError, navigate]);
+
   const handleConfirm = async () => {
-    // Reset all error states
     setEmailError(null);
     setPasswordError(null);
     setGeneralError(null);
 
-    // Check if user agreed to terms
     if (!agreed) {
       setGeneralError("Please agree to the terms.");
       return;
     }
 
     if (isAuthenticated) {
-      // If already authenticated, proceed to next step
       onNext();
       return;
     }
 
     try {
-      // Validate email and password using Zod schema
       validationSchema.parse({ email, password });
-
-      try {
-        // Attempt to log in
-        const user = await authService.login(email, password);
-        await login(user.name, user.email, password, keepLoggedIn);
-        if (keepLoggedIn) {
-          localStorage.setItem("userEmail", user.email);
-        }
+      const resultAction = await dispatch(
+        loginUser({ email, password, keepLoggedIn })
+      );
+      if (loginUser.fulfilled.match(resultAction)) {
         onNext();
-      } catch (error) {
-        // Handle login errors
-        if (error instanceof Error) {
-          if (error.message === "EMAIL_NOT_FOUND") {
-            setEmailError("Email doesn't exist. Please register.");
-            setTimeout(() => navigate("/register"), 3000);
-          } else if (error.message === "INVALID_PASSWORD") {
-            setPasswordError("Incorrect password. Please try again.");
-          } else {
-            setGeneralError("An unexpected error occurred. Please try again.");
-          }
-        }
       }
     } catch (error) {
-      // Handle Zod validation errors
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
           if (err.path[0] === "email") {
@@ -126,7 +105,6 @@ export default function ConfirmLevel({
         Invoice Details:
       </Typography>
 
-      {/* Display exchange information */}
       <div className="flex flex-row justify-between items-center lg:mt-[43px] md:mt-[33px] mt-[23px]">
         <Typography variant="FT" className="text-footer-text">
           Send:
@@ -170,7 +148,6 @@ export default function ConfirmLevel({
         sx={{ width: "100%", backgroundColor: "#596B89", mx: 1, mt: "34px" }}
       />
 
-      {/* Render ConfirmEmail component if user is not authenticated */}
       {!isAuthenticated && (
         <>
           <ConfirmEmail
@@ -181,7 +158,6 @@ export default function ConfirmLevel({
             emailError={emailError || undefined}
             passwordError={passwordError || undefined}
           />
-          {/* Keep me logged in checkbox */}
           <div className="flex items-center mt-4">
             <Checkbox
               checked={keepLoggedIn}
@@ -211,7 +187,6 @@ export default function ConfirmLevel({
 
       <ConfirmLevelRules />
 
-      {/* Agreement checkbox */}
       <div className="flex flex-row mt-8">
         <div className="flex items-center">
           <Checkbox
@@ -240,14 +215,12 @@ export default function ConfirmLevel({
         </div>
       </div>
 
-      {/* Display general error message */}
       {generalError && (
         <Typography className="text-red-500 mt-4" variant="FI">
           {generalError}
         </Typography>
       )}
 
-      {/* Confirm button */}
       <div className="w-full flex justify-center">
         <Button
           onClick={handleConfirm}

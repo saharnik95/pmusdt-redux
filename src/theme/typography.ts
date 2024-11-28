@@ -104,6 +104,17 @@ const typography: TypographyOptions = {
       lineHeight: 1.29,
     }
   ),
+  PH: createResponsiveTypography(
+    {
+      fontSize: "14px",
+      fontWeight: 700,
+      lineHeight: 1.22,
+    },
+    {
+      fontSize: "18px",
+      lineHeight: 1.29,
+    }
+  ),
   FT: createResponsiveTypography(
     {
       fontSize: "12px",
@@ -149,6 +160,30 @@ const typography: TypographyOptions = {
       fontSize: "20px",
       fontWeight: 700,
       lineHeight: 2,
+    }
+  ),
+  UH: createResponsiveTypography(
+    {
+      fontSize: "30px",
+      fontWeight: 700,
+      lineHeight: "77PX",
+    },
+    {
+      fontSize: "48px",
+      fontWeight: 700,
+      lineHeight: 2,
+    }
+  ),
+
+  QB: createResponsiveTypography(
+    {
+      fontSize: "14px",
+      fontWeight: 400,
+      lineHeight: "16",
+    },
+    {
+      fontSize: "16px",
+      lineHeight: "20.8px",
     }
   ),
 };

@@ -1,20 +1,24 @@
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { z } from "zod";
 import Form from "../components/organisms/Form";
-import { authService } from "../services/authService";
-import { useAuth } from "@/context/authContext";
+import { registerUser } from "../store/authSlice";
+import { AppDispatch } from "../store/store";
+//defining schema
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
+//infering schemas type
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  //defining formfields
 
   const fields: Array<{
     name: keyof RegisterFormData;
@@ -46,23 +50,35 @@ export default function Register() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      const user = await authService.register(
-        data.name,
-        data.email,
-        data.password
-      );
-      login(user.name, user.email, user.password, false); // Added 'false' for keepLoggedIn
-      navigate("/");
+      registerSchema.parse(data); //validating with registerSchema
+      const resultAction = await dispatch(registerUser(data)); //sending action to register
+
+      if (registerUser.fulfilled.match(resultAction)) {
+        navigate("/");
+      } else if (registerUser.rejected.match(resultAction)) {
+        throw new Error(resultAction.payload as string);
+      }
     } catch (error) {
-      const errorMsg =
-        error || "An error occurred while changing the password.";
-      alert(errorMsg);
-      console.error("Registration failed:", error);
+      if (error instanceof z.ZodError) {
+        const formattedErrors = error.errors.reduce((acc, err) => {
+          acc[err.path[0]] = err.message;
+          return acc;
+        }, {} as { [key: string]: string });
+        throw formattedErrors;
+      } else if (error instanceof Error) {
+        if (error.message === "EMAIL_ALREADY_REGISTERED") {
+          throw { email: "This email is already registered" };
+        } else {
+          throw { form: "An unexpected error occurred during registration" };
+        }
+      } else {
+        throw { form: "An unexpected error occurred during registration" };
+      }
     }
   };
 
   return (
-    <div className="flex items-center justify-center lg:mb-[114px] lg:mt-[85px]  md:my-16 my-8 ">
+    <div className="flex items-center justify-center lg:mb-[114px] lg:mt-[85px] md:my-16 my-8">
       <Form
         title="Register"
         fields={fields}

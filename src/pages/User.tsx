@@ -1,17 +1,26 @@
-import UserLeftSide from "@/components/organisms/UserLeftSide";
-import { useState } from "react";
-import { useAuth } from "@/context/authContext";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import UserLeftSide from "@/components/organisms/UserLeftSide";
 import UserDashboard from "@/components/molecules/user/UserDashboard";
 import UserProfile from "@/components/molecules/user/UserProfile";
 import UserPartner from "@/components/molecules/user/UserPartner";
+import { RootState, AppDispatch } from "@/store/store";
+import { setCurrentPage } from "@/store/userSlice";
+import { logout } from "@/store/authSlice";
 
 export default function User() {
-  const [currentPage, setCurrentPage] = useState<string>("Dashboard");
-  const { logout } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const currentPage = useSelector((state: RootState) => state.user.currentPage);
 
-  // Render right side based on currentPage
+  useEffect(() => {
+    if (currentPage === "Exit") {
+      dispatch(logout());
+      navigate("/login");
+    }
+  }, [currentPage, dispatch, navigate]);
+
   const renderRightSide = () => {
     switch (currentPage) {
       case "Dashboard":
@@ -21,29 +30,20 @@ export default function User() {
       case "Partner Program":
         return <UserPartner />;
       default:
-        return null; // Handle any unknown page
+        return null;
     }
   };
 
   return (
-    <div className="w-full flex  lg:gap-x-5 max-w-[1140px] xl:px-0 xl:mx-auto lg:mb-12 md:mb-16 mb-8 ">
-      <div className="flex flex-col">
-        {/* Pass `currentPage` as a prop */}
+    <div className="w-full flex md:flex-row flex-col lg:gap-x-5 md:gap-x-2 gap-y-3 max-w-[1140px] xl:px-0 xl:mx-auto lg:mb-12 md:px-8 md:pb-16 px-4 pb-12 ">
+      <div className="flex flex-col ">
         <UserLeftSide
-          setCurrentPage={setCurrentPage}
+          setCurrentPage={(page: string) => dispatch(setCurrentPage(page))}
           currentPage={currentPage}
         />
       </div>
 
-      <div className="flex flex-col">
-        {currentPage === "Exit"
-          ? (() => {
-              logout();
-              navigate("/login");
-              return null; // Return `null` to render nothing after logout
-            })()
-          : renderRightSide()}
-      </div>
+      <div className="flex flex-col w-full">{renderRightSide()}</div>
     </div>
   );
 }

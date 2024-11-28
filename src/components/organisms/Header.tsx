@@ -1,18 +1,18 @@
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 import Logo from "../atoms/header/Logo";
 import MainMenu from "../molecules/header/MainMenu";
 import LoginAndRegister from "../molecules/header/LoginAndRegister";
-import { useAuth } from "@/context/authContext";
 import { Typography } from "@mui/material";
 import PersonIconComponent from "../icons/PersonIconComponent";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
-  const { user } = useAuth();
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const user = useSelector((state: RootState) => state.auth.user); //reading authentication from redux
+  const navigate = useNavigate();
 
-  // Handle navigation to /user page
   const handleProfileClick = () => {
-    navigate("/user"); // Navigate to /user page
+    navigate("/user");
   };
 
   return (
