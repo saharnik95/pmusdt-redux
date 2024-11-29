@@ -1,8 +1,6 @@
 import * as React from "react";
 
-const RightFlashIconComponent: React.FC<React.SVGProps<SVGSVGElement>> = (
-  props
-) => (
+const RightFlashIconComponent: React.FC<React.SVGProps<SVGSVGElement>> = () => (
   <svg
     width="16"
     height="18"

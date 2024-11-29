@@ -8,7 +8,7 @@ import PersonIconComponent from "../icons/PersonIconComponent";
 import { useNavigate } from "react-router-dom";
 
 export default function Header() {
-  const user = useSelector((state: RootState) => state.auth.user); //reading authentication from redux
+  const user = useSelector((state: RootState) => state.auth.user); //reading user data from redux
   const navigate = useNavigate();
 
   const handleProfileClick = () => {

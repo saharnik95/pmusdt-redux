@@ -51,6 +51,7 @@ export default function UserLeftSide({
         const isSelected = currentPage === item.name;
         console.log("current page" + currentPage);
         console.log(item.name);
+
         console.log(isSelected);
 
         return (

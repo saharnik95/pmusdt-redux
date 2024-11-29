@@ -56,7 +56,7 @@ const StyledInputBase = styled(InputBase)(({}) => ({
   },
 }));
 
-const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
+const StyledTextarea = styled(TextareaAutosize)(({}) => ({
   width: "100%",
   color: "white",
   padding: "20px 16px",

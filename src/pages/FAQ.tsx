@@ -56,7 +56,7 @@ export default function FAQ() {
       </div>
       {/*Accardeons*/}
       <div className="mt-[50px] flex flex-col gap-[26px]">
-        {accordionData.map((accordion, index) => (
+        {accordionData.map((index) => (
           <AbouUsAccordion key={index} />
         ))}
       </div>

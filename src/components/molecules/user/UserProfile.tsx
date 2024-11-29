@@ -83,7 +83,7 @@ export default function UserProfile() {
   };
 
   return (
-    <div className="flex flex-col w-full bg-form-background lg:pt-[38px] lg:pb-[61px]   xl:px-[160px] lg:px-[60px] md:px-[0px] md:pt-[28px] md:pb-[51px] pt-[18px] pb-[41px]  rounded-[20px]">
+    <div className="flex flex-col w-full bg-form-background lg:pt-[38px] lg:pb-[61px]  xl:px-[140px] lg:px-[60px] md:px-[0px] md:pt-[28px] md:pb-[51px] pt-[18px] pb-[41px]  rounded-[20px]">
       <Typography variant="FH" className="text-white pl-6">
         Edit profile
       </Typography>

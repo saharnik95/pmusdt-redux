@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import ExchangeLevelDiv from "@/components/molecules/exchangeLevel/ExchangeLevelDiv";
-import { useDebounce } from "@/hook/useDebounce";
+import { useDebounce } from "@/hooks/useDebounce";
 
 // Define the structure for exchange information
 interface ExchangeInfo {
