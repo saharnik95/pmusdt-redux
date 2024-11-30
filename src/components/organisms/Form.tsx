@@ -195,7 +195,7 @@ export default function Form<T extends z.ZodType<any, any>>({
                       paddingBottom: 0,
                       color: "#5B5F5E",
                       "&.Mui-checked": {
-                        color: "form-buttonBackground",
+                        color: "#1D8D94",
                       },
                     }}
                   />

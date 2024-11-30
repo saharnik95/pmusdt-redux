@@ -12,6 +12,9 @@ export default function TableModal({ open, handleClose }: TableModalProps) {
       open={open}
       onClose={handleClose}
       sx={{
+        "& .MuiBackdrop-root": {
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
         alignItems: "center",
         justifyContent: "center",
         paddingX: {
@@ -50,7 +53,7 @@ export default function TableModal({ open, handleClose }: TableModalProps) {
             className="text-white"
             id="modal-modal-title"
           >
-            withdraw
+            Withdraw
           </Typography>
           <IconButton onClick={handleClose} sx={{ color: "white" }}>
             <MultipleIconComponent />
@@ -73,15 +76,19 @@ export default function TableModal({ open, handleClose }: TableModalProps) {
             className="text-footer-text mb-[29px]"
             id="modal-modal-description"
           >
-            your wallet address (tether TRC20){" "}
+            Your Wallet Address (Tether TRC20){" "}
           </Typography>
         </span>
 
-        <Input placeholder="Address" showSearchIcon={false}></Input>
+        <Input
+          placeholder="Address"
+          showSearchIcon={false}
+          height={"57PX"}
+        ></Input>
 
         <span className=" mt-[20px]">
           {" "}
-          <Button>confirm</Button>
+          <Button height={"57PX"}>Confirm</Button>
         </span>
       </Box>
     </Modal>

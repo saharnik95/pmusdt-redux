@@ -1,4 +1,4 @@
-import AbouUsAccordion from "@/components/atoms/aboutUs/AbouUsAccordion";
+import AboutUsAccordion from "@/components/atoms/aboutUs/AboutUsAccordion";
 import Button from "@/components/atoms/form/Button";
 import Input from "@/components/atoms/table/Input";
 import { Typography } from "@mui/material";
@@ -26,16 +26,16 @@ export default function FAQ() {
           Help Center
         </Typography>
         {/*searchs*/}
-        <div className="flex w-full justify-between lg:gap-[20px] md:gap-3 gap-2">
+        <div className="flex w-full justify-between gap-2 md:gap-3 lg:gap-5">
           <div className="w-[80%]">
-            {" "}
             <Input
               placeholder="Find your desired question..."
               showSearchIcon={true}
-            />{" "}
+              height="80px"
+            />
           </div>
           <div className="w-[20%]">
-            <Button>Search</Button>
+            <Button height="80px">Search</Button>
           </div>
         </div>
 
@@ -57,7 +57,7 @@ export default function FAQ() {
       {/*Accardeons*/}
       <div className="mt-[50px] flex flex-col gap-[26px]">
         {accordionData.map((index) => (
-          <AbouUsAccordion key={index} />
+          <AboutUsAccordion key={index} />
         ))}
       </div>
     </div>

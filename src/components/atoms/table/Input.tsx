@@ -4,46 +4,50 @@ import SearchIconComponent from "@/components/icons/SearchIconComponent";
 
 interface InputProps {
   placeholder?: string;
-  value?: string; // Controlled value
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; // Change handler
-  showSearchIcon?: boolean; // New prop to control visibility of the search icon
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  showSearchIcon?: boolean;
+  height?: string | number;
 }
 
-const StyledInputBase = styled(InputBase)(({}) => ({
-  "& .MuiInputBase-input": {
-    width: "100%",
-    color: "white",
-    padding: "20px 16px",
-    paddingLeft: "40px",
-    maxHeight: "57px",
-    backgroundColor: "#242C39",
-    border: "none",
-    borderRadius: "10px",
-    "&::placeholder": {
+const StyledInputBase = styled(InputBase)<{ $height?: string | number }>(
+  ({ $height }) => ({
+    "& .MuiInputBase-input": {
+      width: "100%",
       color: "white",
-      fontSize: "16px",
-      fontWeight: 600,
-      lineHeight: "20.8px",
-      opacity: 1,
+      padding: "0 16px",
+      paddingLeft: "40px",
+      height: $height || "80px",
+      backgroundColor: "#242C39",
+      border: "none",
+      borderRadius: "10px",
+      "&::placeholder": {
+        color: "white",
+        fontSize: "16px",
+        fontWeight: 600,
+        lineHeight: "20.8px",
+        opacity: 1,
+      },
+      "&:focus": {
+        outline: "none",
+        boxShadow: "0 0 0 2px var(--primary)",
+      },
     },
-    "&:focus": {
-      outline: "none",
-      boxShadow: "0 0 0 2px var(--primary)",
+    "& .MuiInputAdornment-root": {
+      position: "absolute",
+      left: "12px",
+      top: "50%",
+      transform: "translateY(-50%)",
     },
-  },
-  "& .MuiInputAdornment-root": {
-    position: "absolute",
-    left: "12px",
-    top: "50%",
-    transform: "translateY(-50%)",
-  },
-}));
+  })
+);
 
 export default function Input({
   placeholder,
   value,
   onChange,
   showSearchIcon,
+  height,
 }: InputProps) {
   return (
     <StyledInputBase
@@ -58,6 +62,7 @@ export default function Input({
           </InputAdornment>
         )
       }
+      $height={height}
     />
   );
 }

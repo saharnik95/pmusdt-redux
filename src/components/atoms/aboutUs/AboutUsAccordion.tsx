@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import DownFlashIconComponent from "@/components/icons/DownFlashIconComponent";
 import RightFlashIconComponent from "@/components/icons/RightFlashIconComponent";
 
-export default function AbouUsAccordion() {
+export default function AboutUsAccordion() {
   return (
     <div>
       <Accordion

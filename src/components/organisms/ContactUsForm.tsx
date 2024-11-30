@@ -128,7 +128,7 @@ export default function ContactUsForm<T extends z.ZodType<any, any>>({
 
         {formError && <p className="text-sm text-form-fail">{formError}</p>}
         <div className="pt-4">
-          <Button disabled={isLoading}>
+          <Button disabled={isLoading} height={"60px"}>
             <Typography variant="FI" className="text-white">
               {isLoading ? "Loading..." : submitButtonText}
             </Typography>

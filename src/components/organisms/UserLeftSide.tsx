@@ -46,7 +46,7 @@ export default function UserLeftSide({
   ];
 
   return (
-    <div className="flex flex-col lg:gap-y-[40px] md:gap-y-7 gap-y-3  bg-form-background lg:pt-[38px] lg:pb-[45px] lg:w-[270px] md:pt-[30px] md:pb-[40px] md:basis-[175px] md:px-6  pt-[20px] pb-[30px] w-full px-2       rounded-[20px]">
+    <div className="flex flex-col lg:gap-y-[40px] md:gap-y-7 gap-y-3  bg-form-background xl:px-8 lg:pt-[38px] lg:pb-[45px] lg:w-[270px] md:pt-[30px] md:pb-[40px] md:basis-[145px] md:px-3  pt-[20px] pb-[30px] w-full px-2       rounded-[20px]">
       {UserMenuItems.map((item) => {
         const isSelected = currentPage === item.name;
         console.log("current page" + currentPage);
@@ -71,8 +71,8 @@ export default function UserLeftSide({
               }`}
               sx={{
                 fontWeight: isSelected ? "semibold" : "normal",
-                fontSize: { md: "18px", xs: "14px" },
-                lineHeight: { md: "23.4px", xs: "20px" },
+                fontSize: { md: "16px", xs: "14px" },
+                lineHeight: { md: "20.4px", xs: "18px" },
               }}
             >
               {item.name}

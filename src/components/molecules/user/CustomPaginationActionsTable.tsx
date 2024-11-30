@@ -56,7 +56,8 @@ const StickyHeadTable: React.FC<Props> = ({
       >
         <TableContainer
           sx={{
-            maxHeight: { xl: "812px" },
+            maxHeight: { xl: "812px", md: "470px" },
+            overflowX: "auto",
           }}
         >
           <Table>
@@ -115,8 +116,8 @@ const StickyHeadTable: React.FC<Props> = ({
                             sx={{
                               color: "white",
                               font: "400",
-                              fontSize: { lg: "14px", xs: "12px" },
-                              lineHeight: { lg: "18.2px", xs: "16px" },
+                              fontSize: { lg: "14px", md: "12px" },
+                              lineHeight: { lg: "18.2px", md: "16px" },
                               borderBottom: "1px solid #313A4B",
                               padding: { xl: "25px", lg: "20px", md: "4px" },
                             }}
