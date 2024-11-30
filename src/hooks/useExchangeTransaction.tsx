@@ -9,12 +9,13 @@ export const useExchangeTransactions = () => {
 
   const { data, fetchNextPage, isFetchingNextPage, isLoading, status } =
     useInfiniteQuery({
-      queryKey: ["exchangeTransactions", query], //sending query to api to search -tell react query to checks which data in catch
+      queryKey: ["exchangeTransactions", query], //sending query to api to search tell react query to checks which data in catch
       queryFn: (
         { pageParam = 1 } //if data doesnt exist incatch use this function to relocate them
       ) => fetchTransactions("exchange", query, pageParam), //calling api
       getNextPageParam: (
-        lastPage //provides next page to fetch
+        //provides next page to fetch
+        lastPage
       ) =>
         lastPage.meta.currentPage < lastPage.meta.totalPages //until there is a next page returns that till it ends
           ? lastPage.meta.currentPage + 1

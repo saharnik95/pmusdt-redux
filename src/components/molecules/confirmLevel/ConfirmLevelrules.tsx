@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
 
-export function ConfirmLevelRules() {
+export default function ConfirmLevelRules() {
   const exchangeProcessSteps = [
     {
       id: 1,
@@ -75,4 +75,3 @@ export function ConfirmLevelRules() {
     </div>
   );
 }
-export default ConfirmLevelRules;

@@ -54,7 +54,7 @@ export const fetchTransactions = async (
     mockData: paginatedData,
     meta: {
       currentPage: page,
-      totalPages: Math.ceil(filteredData.length / 7),
+      totalPages: Math.ceil(filteredData.length / 7), //totalpage and item base on filtered data
       totalItems: filteredData.length,
       itemsPerPage: 7,
     },

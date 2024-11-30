@@ -133,6 +133,7 @@ const StickyHeadTable: React.FC<Props> = ({
           </Table>
         </TableContainer>
       </Paper>
+
       {/*pagination*/}
       <Box
         sx={{
