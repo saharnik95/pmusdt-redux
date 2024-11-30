@@ -5,7 +5,7 @@ import ConfirmEmail from "../molecules/confirmLevel/ConfirmEmail";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import ConfirmLevelRules from "@/components/molecules/confirmLevel/ConfirmLevelRules";
+import ConfirmLevelrules from "@/components/molecules/confirmLevel/ConfirmLevelRules";
 import { RootState, AppDispatch } from "@/store/store";
 import { loginUser } from "@/store/authSlice";
 
@@ -185,7 +185,7 @@ export default function ConfirmLevel({ onNext }: ConfirmLevelProps) {
         </>
       )}
 
-      <ConfirmLevelRules />
+      <ConfirmLevelrules />
 
       <div className="flex flex-row mt-8">
         <div className="flex items-center">
