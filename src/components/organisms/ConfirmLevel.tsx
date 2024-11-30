@@ -5,7 +5,7 @@ import ConfirmEmail from "../molecules/confirmLevel/ConfirmEmail";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import ConfirmLevelrules from "@/components/molecules/confirmLevel/ConfirmLevelRules";
+import ConfirmLevelrules from "@/components/molecules/confirmLevel/ConfirmLevelrules";
 import { RootState, AppDispatch } from "@/store/store";
 import { loginUser } from "@/store/authSlice";
 
