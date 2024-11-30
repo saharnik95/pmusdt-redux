@@ -38,6 +38,7 @@ export default function UserDashboard() {
   return (
     <div className="flex flex-col bg-form-background lg:pt-[20px] lg:pb-[27px] md:py-4 py-3 w-full lg:px-[20px] md:px-4 px-2 rounded-[20px]">
       <Input
+        height="57px"
         placeholder="Search..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}

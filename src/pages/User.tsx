@@ -36,23 +36,22 @@ export default function User() {
   };
 
   const renderRightSide = () => {
-    switch (currentPage) {
-      case "Dashboard":
-        return (
-          <QueryProvider>
-            <UserDashboard />{" "}
-          </QueryProvider>
-        );
-      case "Profile":
-        return <UserProfile />;
-      case "Partner Program":
-        return (
-          <QueryProvider>
-            <UserPartner />
-          </QueryProvider>
-        );
-      default:
-        return null;
+    if (currentPage === "Dashboard") {
+      return (
+        <QueryProvider>
+          <UserDashboard />
+        </QueryProvider>
+      );
+    } else if (currentPage === "Profile") {
+      return <UserProfile />;
+    } else if (currentPage === "Partner Program") {
+      return (
+        <QueryProvider>
+          <UserPartner />
+        </QueryProvider>
+      );
+    } else {
+      return null;
     }
   };
 
