@@ -3,7 +3,6 @@ import emailjs from "@emailjs/browser";
 import { z } from "zod";
 import ContactUsForm from "@/components/organisms/ContactUsForm";
 
-//defining schema
 const ContactUsSchema = z.object({
   email: z.string().email("Invalid email address"),
   subject: z
@@ -15,7 +14,6 @@ const ContactUsSchema = z.object({
     .min(10, "Message must be at least 10 characters")
     .max(500, "Message must be less than 500 characters"),
 });
-//infering schemas type
 
 type ContactUsData = z.infer<typeof ContactUsSchema>;
 
@@ -23,7 +21,6 @@ export default function ContactUs() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
-  //defining formfields
 
   const fields: {
     name: keyof ContactUsData;
@@ -56,15 +53,15 @@ export default function ContactUs() {
   const onSubmit = async (data: ContactUsData): Promise<void> => {
     try {
       const result = await emailjs.send(
-        "service_qnmc27k",
-        "template_vt8y2tn",
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         {
-          to_email: "recipient@example.com",
+          to_email: import.meta.env.VITE_RECIPIENT_EMAIL,
           from_name: data.email,
           subject: data.subject,
           message: data.message,
         },
-        "CFqxeGkDMqO1dWLjK"
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
 
       if (result.text === "OK") {
