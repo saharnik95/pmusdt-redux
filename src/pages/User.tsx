@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Routes, Route, Navigate } from "react-router-dom";
 import UserLeftSide from "@/components/organisms/UserLeftSide";
 import UserDashboard from "@/components/molecules/user/UserDashboard";
 import UserProfile from "@/components/molecules/user/UserProfile";
@@ -35,26 +35,6 @@ export default function User() {
     }
   };
 
-  const renderRightSide = () => {
-    if (currentPage === "Dashboard") {
-      return (
-        <QueryProvider>
-          <UserDashboard />
-        </QueryProvider>
-      );
-    } else if (currentPage === "Profile") {
-      return <UserProfile />;
-    } else if (currentPage === "Partner Program") {
-      return (
-        <QueryProvider>
-          <UserPartner />
-        </QueryProvider>
-      );
-    } else {
-      return null;
-    }
-  };
-
   return (
     <div className="w-full flex md:flex-row flex-col lg:gap-x-5 md:gap-x-2 gap-y-3 max-w-[1140px] xl:px-0 xl:mx-auto lg:mb-12 md:px-8 md:pb-16 px-4 pb-12 ">
       <div className="flex flex-col ">
@@ -64,7 +44,29 @@ export default function User() {
         />
       </div>
 
-      <div className="flex flex-col w-full">{renderRightSide()}</div>
+      <div className="flex flex-col w-full">
+        <Routes>
+          {/*default route*/}
+          <Route index element={<Navigate to="dashboard" />} />{" "}
+          <Route
+            path="dashboard"
+            element={
+              <QueryProvider>
+                <UserDashboard />
+              </QueryProvider>
+            }
+          />
+          <Route path="profile" element={<UserProfile />} />
+          <Route
+            path="partner"
+            element={
+              <QueryProvider>
+                <UserPartner />
+              </QueryProvider>
+            }
+          />
+        </Routes>
+      </div>
     </div>
   );
 }

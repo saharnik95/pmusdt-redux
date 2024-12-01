@@ -17,7 +17,6 @@ const editProfileSchema = z.object({
 });
 
 //infering schemas type
-
 type EditProfileFormData = z.infer<typeof editProfileSchema>;
 
 export default function UserProfile() {
@@ -25,7 +24,6 @@ export default function UserProfile() {
   const dispatch = useDispatch<AppDispatch>();
   //reading authentication status from store
   const user = useSelector((state: RootState) => state.auth.user);
-
   if (!user) {
     navigate("/login");
     return null;
@@ -64,10 +62,12 @@ export default function UserProfile() {
     try {
       const resultAction = await dispatch(
         //sending action to  update user
-
-        updateUserProfile({ id: user.id, ...data }) //spreding name email and pass
+        updateUserProfile({ id: user.id, ...data }) //spreading name email and pass
       );
+
       if (updateUserProfile.fulfilled.match(resultAction)) {
+        //console.log(resultAction);
+        //console.log(updateUserProfile.fulfilled);
         navigate("/login");
       } else if (updateUserProfile.rejected.match(resultAction)) {
         throw new Error(resultAction.payload as string);

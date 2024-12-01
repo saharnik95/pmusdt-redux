@@ -5,7 +5,7 @@ import CopyIconComponent from "@/components/icons/CopyIconComponent";
 import DiamondsIconComponent from "@/components/icons/DiamondsIconComponent";
 import PersonsIconComponent from "@/components/icons/PersonsIconComponent";
 import TableModal from "@/components/atoms/table/TableModal";
-import { usePartnerTransactions } from "@/hooks/usePartnerTransaction";
+import { useTransactions } from "@/hooks/useTransactions";
 //defining interface for column table
 interface Column {
   id: string;
@@ -53,7 +53,7 @@ export default function UserPartner() {
     isLoading,
     status,
     isFetchingNextPage,
-  } = usePartnerTransactions();
+  } = useTransactions("partner");
 
   return (
     <div className="flex flex-col w-full bg-form-background lg:pt-[38px] lg:pb-[61px] lg:px-[20px] md:pt-[28px] md:pb-[51px] md:px-4 pt-[18px] pb-[41px] px-2 rounded-[20px]">

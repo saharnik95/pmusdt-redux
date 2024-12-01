@@ -3,6 +3,7 @@ import emailjs from "@emailjs/browser";
 import { z } from "zod";
 import ContactUsForm from "@/components/organisms/ContactUsForm";
 
+//defining schema
 const ContactUsSchema = z.object({
   email: z.string().email("Invalid email address"),
   subject: z
@@ -15,6 +16,7 @@ const ContactUsSchema = z.object({
     .max(500, "Message must be less than 500 characters"),
 });
 
+//infering schemas type
 type ContactUsData = z.infer<typeof ContactUsSchema>;
 
 export default function ContactUs() {
@@ -22,8 +24,9 @@ export default function ContactUs() {
     "idle" | "success" | "error"
   >("idle");
 
+  //defining formfields
   const fields: {
-    name: keyof ContactUsData;
+    name: keyof ContactUsData; //name can be one of contactusdatas email|subject|message
     label: string;
     type: string;
     placeholder: string;

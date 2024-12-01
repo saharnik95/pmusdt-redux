@@ -12,14 +12,16 @@ import { Typography } from "@mui/material";
 import Button from "@/components/atoms/form/Button";
 import Input from "@/components/atoms/form/Input";
 
+//defining interface for fields
 interface FormField<T extends FieldValues> {
-  name: Path<T>;
+  //type of the object that holds all the values of the form fields.
+  name: Path<T>; //can only be valid keys of T
   label: string;
   type: string;
   placeholder?: string;
-  rows?: number; // Add this line to allow specifying the number of rows for textarea
+  rows?: number;
 }
-
+//defining interface for FormProps
 interface FormProps<T extends z.ZodType<any, any>> {
   title: string;
   fields: FormField<z.infer<T>>[];
@@ -30,6 +32,7 @@ interface FormProps<T extends z.ZodType<any, any>> {
 }
 
 export default function ContactUsForm<T extends z.ZodType<any, any>>({
+  //types can be anytype that extends from zodtype
   title,
   fields,
   schema,
@@ -38,8 +41,8 @@ export default function ContactUsForm<T extends z.ZodType<any, any>>({
   textHeader,
 }: FormProps<T>) {
   const [isLoading, setIsLoading] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-
+  const [formError, setFormError] = useState<string | null>(null); //removing previous errors
+  //infering formdata type from zod schema
   type FormData = z.infer<T>;
   const {
     control,
@@ -48,26 +51,31 @@ export default function ContactUsForm<T extends z.ZodType<any, any>>({
     setError,
     clearErrors,
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema), //validating form
     defaultValues: fields.reduce((acc, field) => {
+      //turnes an array to a object
       acc[field.name] = "";
       return acc;
     }, {} as FormData),
   });
 
   const handleFormSubmit: SubmitHandler<FormData> = async (data: FormData) => {
-    setIsLoading(true);
+    //flexible for using any schema of zod
+    setIsLoading(true); //true while sending
     setFormError(null);
-    clearErrors();
+    clearErrors(); //removing previous error
     try {
       await onSubmit(data);
     } catch (err) {
       if (err && typeof err === "object") {
+        //if error is an object turnes it to an array made of key and message
         Object.entries(err).forEach(([key, message]) => {
           if (key === "form") {
+            //if error is about form turn it to string
             setFormError(message as string);
           } else {
             setError(key as Path<FormData>, {
+              //setting the errors that arent about form
               type: "manual",
               message: message as string,
             });
@@ -75,7 +83,7 @@ export default function ContactUsForm<T extends z.ZodType<any, any>>({
         });
       } else {
         setFormError(
-          err instanceof Error ? err.message : "An unexpected error occurred"
+          err instanceof Error ? err.message : "An unexpected error occurred" //checking weather the error is the instance of Error object or not
         );
       }
     } finally {
@@ -104,10 +112,10 @@ export default function ContactUsForm<T extends z.ZodType<any, any>>({
         className="w-full flex flex-col gap-y-[22px]"
       >
         {fields.map((field) => (
-          <Controller
+          <Controller //when using mui you need to use controller to connect your input to hookform
             key={field.name}
-            name={field.name}
-            control={control}
+            name={field.name} //to attache every controller to its field
+            control={control} //to handle each field
             render={({ field: { onChange, value } }) => (
               <div className="relative">
                 <Input
@@ -119,7 +127,7 @@ export default function ContactUsForm<T extends z.ZodType<any, any>>({
                   error={!!errors[field.name]}
                   helperText={errors[field.name]?.message as string}
                   placeholder={field.placeholder}
-                  rows={field.rows} // Pass the rows prop to the Input component
+                  rows={field.rows}
                 />
               </div>
             )}
